@@ -18,8 +18,16 @@ export const schema = createSchema({
 	}
 
 	type Query {
-      name: String!
-	}`,
+      users: [Users!]
+      link(id: Int!): Links
+	}
+  
+  type Mutation {
+    createLink(url: String!): Link!
+    createUser(name: String!, email: String!, password: String!): User!
+    login(email: String!, password: String!): String!
+  }
+  `,
 	resolvers: {
 		Query: {
 			name() {
@@ -28,4 +36,3 @@ export const schema = createSchema({
 		}
 	}
 	})
-
