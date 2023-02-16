@@ -8,7 +8,8 @@
 		"module": "es2022",
 		"moduleResolution": "node",
 		"types": [
-			"@cloudflare/workers-types"],
+			"@cloudflare/workers-types",
+			"@types/jsonwebtoken"],
 		"resolveJsonModule": true ,
 		"allowJs": true,
 		"checkJs": true,
