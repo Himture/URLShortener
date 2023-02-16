@@ -1,23 +1,13 @@
-import { createYoga, createSchema } from "graphql-yoga"
+import { createYoga } from "graphql-yoga"
+import pscale from "./pscale";
+import { schema } from "./schema";
 
 export interface Env {}
 
-const yoga = createYoga<Env & ExecutionContext>({
-	schema: createSchema({
-		typeDefs: `
-		type Query {
-			hello: String!
-		}`,
-		resolvers: {
-			Query: {
-				hello: () => 'Cloudflare Workers!'
-			}
-		}
-	})
+const yoga = createYoga({
+	schema,
 })
 
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response("Hello World!");
-	},
+	fetch: yoga.fetch,
 };
