@@ -9,7 +9,8 @@
 		"moduleResolution": "node",
 		"types": [
 			"@cloudflare/workers-types",
-			"@types/jsonwebtoken"],
+			"@types/jsonwebtoken",
+			"@types/mysql"],
 		"resolveJsonModule": true ,
 		"allowJs": true,
 		"checkJs": true,

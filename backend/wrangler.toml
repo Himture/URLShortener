@@ -1,3 +1,5 @@
 name = "graphql"
 main = "src/index.ts"
 compatibility_date = "2023-02-16"
+account_id = "c1327a2fd0691066bd51c83fb1fad5c7"
+node_compat = true

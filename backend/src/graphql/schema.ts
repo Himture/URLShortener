@@ -1,5 +1,5 @@
 import { createSchema } from "graphql-yoga";
-import { resolvers } from "./resolvers";
+import resolvers from "./resolvers";
 
 export const schema = createSchema({
   typeDefs: /* GraphQL */ `
@@ -8,6 +8,7 @@ export const schema = createSchema({
       email: String!
       uID: Int!
       slinks: [String]
+      passw: String!
     }
 
     type Links {
@@ -19,14 +20,13 @@ export const schema = createSchema({
     }
 
     type Query {
-      users: [Users!]
-      link(id: Int!): Links
+      getURL(sLink: String!): String
     }
 
     type Mutation {
-      createLink(url: String!): Link!
-      createUser(name: String!, email: String!, password: String!): User!
-      login(email: String!, password: String!): String!
+      createURL(oLink:String, sLink:String, userID:Int, tag:String):Boolean
+      createUser(name:String, email:String, password:String):Boolean
+      login(email:String, password:String):String
     }
   `,
   resolvers,
