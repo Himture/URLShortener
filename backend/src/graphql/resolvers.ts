@@ -1,64 +1,103 @@
-import { createUser, createShortUrl, getUrlByShortUrl, getUserByEmail } from '../planetscale/database';
-import { CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, GlobalSignOutCommand, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { getUrlByShortUrl, createUser, getAllShortURL } from "../planetscale/database";
+import {
+  CognitoIdentityProviderClient,
+  SignUpCommand,
+  InitiateAuthCommand,
+  GlobalSignOutCommand,
+  ConfirmSignUpCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 
-const userPoolId = 'ap-south-1_avENjbeq1';
-const appClientId = '1ks1rkp3i7h8t84alt70hfs5h2';
-const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({ region: 'ap-south-1' });
+const userPoolId = "ap-south-1_avENjbeq1";
+const appClientId = "1ks1rkp3i7h8t84alt70hfs5h2";
+const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({
+  region: "ap-south-1",
+});
 
 const resolvers = {
   Query: {
+    allUserURL: async (_: unknown, { username }: { username: string }) => {
+      try {
+        const res = getAllShortURL(username)
+        return res
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return err;
+      }
+    },
     getURL: async (_: ParentNode, { sLink }: { sLink: string }) => {
-      const res = getUrlByShortUrl(sLink)
-      return res
+      try {
+        const res = getUrlByShortUrl(sLink);
+        return res;
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return err;
+      }
     },
   },
   Mutation: {
 
-    
-    signup: async (_: unknown, { username, email, password }: { username: string, email: string, password: string }) => {
+    signup: async (
+      _: unknown,
+      { email, password, username }: { username: string, email: string, password: string }
+    ) => {
       const signUp = new SignUpCommand({
         ClientId: appClientId,
         Username: username,
         Password: password,
         UserAttributes: [
           {
-            Name: 'email',
+            Name: "email",
             Value: email,
           },
         ],
       });
       try {
+        createUser(username, email)
         const response = await cognitoIdentityProviderClient.send(signUp);
         return response.UserSub;
       } catch (error) {
-        let err = "error"
+        let err = "error";
         if (error instanceof Error) {
-          err = error.message
+          err = error.message;
         }
-        return error
+        return err;
       }
     },
-    confirmUser: async (_: unknown, { username, code }: { username: string, code: string }) => {
+    confirmUser: async (
+      _: unknown,
+      { username, code }: { username: string, code: string }
+    ) => {
       const confirmSignUpCommand = new ConfirmSignUpCommand({
         ClientId: appClientId,
         Username: username,
-        ConfirmationCode: code
+        ConfirmationCode: code,
       });
 
       try {
-        const res = await cognitoIdentityProviderClient.send(confirmSignUpCommand)
-        return "Success"
+        const res = await cognitoIdentityProviderClient.send(
+          confirmSignUpCommand
+        );
+        return "Success";
       } catch (error) {
-        let err = "error"
+        let err = "error";
         if (error instanceof Error) {
-          err = error.message
+          err = error.message;
         }
-        return error
+        return err;
       }
     },
-    login: async (_: unknown, { email, password }: { email: string, password: string }) => {
+    login: async (
+      _: unknown,
+      { email, password }: { email: string, password: string }
+    ) => {
       const auth = new InitiateAuthCommand({
-        AuthFlow: 'USER_PASSWORD_AUTH',
+        AuthFlow: "USER_PASSWORD_AUTH",
         ClientId: appClientId,
         AuthParameters: {
           USERNAME: email,
@@ -69,11 +108,11 @@ const resolvers = {
         const response = await cognitoIdentityProviderClient.send(auth);
         return response.AuthenticationResult?.IdToken;
       } catch (error) {
-        let err = "error"
+        let err = "error";
         if (error instanceof Error) {
-          err = error.message
+          err = error.message;
         }
-        return error
+        return err;
       }
     },
     logout: async (_: unknown, { idToken }: { idToken: string }) => {
@@ -82,16 +121,16 @@ const resolvers = {
       });
       try {
         const res = await cognitoIdentityProviderClient.send(signOut);
-        return "Success"
+        return "Success";
       } catch (error) {
-        let err = "error"
+        let err = "error";
         if (error instanceof Error) {
-          err = error.message
+          err = error.message;
         }
-        return error
+        return err;
       }
-    }
+    },
   },
-}
+};
 
 export default resolvers;

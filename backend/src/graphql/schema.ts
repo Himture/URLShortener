@@ -6,38 +6,30 @@ export const schema = createSchema({
     type User {
       name: String!
       email: String!
-      uID: Int!
+      username: String!
       slinks: [String]
-      passw: String!
     }
 
     type Links {
-      id: Int!
       oLink: String!
       sLink: String!
-      userID: Int!
-      tag: String
-    }
-
-    type res {
-      oLink: String!
-      sLink: String!
-      userID: Int!
+      username: String!
       tag: String
     }
 
     type Query {
       getURL(sLink: String!): [Links]
+      allUserURL(username: String!): [Links]
     }
 
     type Mutation {
-      login(email:String, password:String, username: String):String
-      confirmUser(username:String, code:String):String
-      signup(email:String, password:String):String
-      logout(email:String):String
+      login(email: String, password: String, username: String): String
+      confirmUser(username: String, code: String): String
+      signup(email: String, password: String, username: String): String
+      logout(email: String): String
 
-      createURL(oLink:String, sLink:String, userID:Int, tag:String):Boolean
-      createUser(name:String, email:String, password:String):Boolean
+      createURL(oLink: String, sLink: String, userID: Int, tag: String): Boolean
+      createUser(name: String, email: String, password: String): Boolean
     }
   `,
   resolvers,
