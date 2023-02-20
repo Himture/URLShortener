@@ -58,8 +58,8 @@ const resolvers = {
         ],
       });
       try {
-        createUser(username, email)
         const response = await cognitoIdentityProviderClient.send(signUp);
+        createUser(username, email)
         return response.UserSub;
       } catch (error) {
         let err = "error";
