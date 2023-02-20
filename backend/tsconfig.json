@@ -8,9 +8,7 @@
 		"module": "es2022",
 		"moduleResolution": "node",
 		"types": [
-			"@cloudflare/workers-types",
-			"@types/jsonwebtoken",
-			"@types/mysql"],
+			"@cloudflare/workers-types"],
 		"resolveJsonModule": true ,
 		"allowJs": true,
 		"checkJs": true,

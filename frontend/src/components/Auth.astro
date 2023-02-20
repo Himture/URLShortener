@@ -1,0 +1,53 @@
+---
+import AuthService from './authService.ts';
+---
+
+<astro-fragment>
+  <script type="module">
+    const authService = new AuthService();
+
+    export default function App() {
+      const [authState, setAuthState] = astro.useState('pending');
+      const [idToken, setIdToken] = astro.useState(null);
+
+      async function checkAuth() {
+        await authService.checkAuthentication();
+        setAuthState(authService.getAuthState());
+        setIdToken(authService.getIdToken());
+      }
+
+      astro.useEffect(checkAuth, []);
+
+      async function handleSignUp() {
+        await authService.signUp('example@example.com', 'password');
+      }
+
+      async function handleLogin() {
+        await authService.login('example@example.com', 'password');
+        setAuthState(authService.getAuthState());
+        setIdToken(authService.getIdToken());
+      }
+
+      async function handleLogout() {
+        await authService.logout();
+        setAuthState(authService.getAuthState());
+        setIdToken(authService.getIdToken());
+      }
+
+      return (
+        <div>
+          {authState === 'unauthenticated' ? (
+            <>
+              <button on:click={handleSignUp}>Sign up</button>
+              <button on:click={handleLogin}>Log in</button>
+            </>
+          ) : authState === 'authenticated' ? (
+            <button on:click={handleLogout}>Log out</button>
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
+      );
+    }
+  </script>
+</astro-fragment>

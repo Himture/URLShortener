@@ -1,16 +1,12 @@
-import {connect} from "@planetscale/database"
+import { connect } from "@planetscale/database"
 import { nanoid } from 'nanoid';
 
-import { DATA_SOURCES } from "../config/vars.config";
-
-const dataSource = DATA_SOURCES.mySqlDataSource
 console.log("trying connection")
 const connection = connect({
     host: 'ap-south.connect.psdb.cloud',
-    username: 'sxgimhi9z9y6oqotr9v4',
-    password: 'pscale_pw_mr65JL0THrkJ5vN0E7c4Yr2tRKo3eoK8sLesV0gYQxd',
+    username: 'ztdr8onhp0qt5yfxlkai',
+    password: 'pscale_pw_Jx20m0XBDMZUMSKsRZNPz228KhY6Jc9lam4WQgcwdcB',
 })
-console.log("connection was made")
 const USER_TABLE = "user"
 const LINKS_TABLE = "links"
 
@@ -31,8 +27,8 @@ export async function createShortUrl(oLink: string, sLink: string, userId: numbe
 export async function getUrlByShortUrl(sLink: string) {
     const query = `SELECT oLink, sLink, userID, tag FROM ${LINKS_TABLE} WHERE sLink = ?;`
     const result = await connection.execute(query, [sLink])
-    console.log()
-    return result
+    console.log(result.rows)
+    return result.rows
 }
 
 export async function deleteShortUrlById(sLink: string) {
