@@ -33,8 +33,9 @@ export const schema = createSchema({
       signup(email: String, password: String, username: String): String
       logout(email: String): String
 
-      createURL(oLink: String, sLink: String, userID: Int, tag: String): Boolean
-      createUser(name: String, email: String, password: String): Boolean
+      addUrl(username:String, oLink:String, sLink:String, tag:String):String
+      updateUrl(sLink:String, oLink:String, username:String): String
+      deleteUrl(username:String, sLink:String): String
     }
   `,
   resolvers,

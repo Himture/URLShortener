@@ -1,4 +1,4 @@
-import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl } from "../planetscale/database";
+import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl, updateShortUrl, deleteShortUrl } from "../planetscale/database";
 import {
   CognitoIdentityProviderClient,
   SignUpCommand,
@@ -23,7 +23,7 @@ export interface Env {
 
 const resolvers = {
   Query: {
-    incrementalSearch: async (_: unknown, {query}: {query:String}, {req}: {req: Request}) => {
+    incrementalSearch: async (_: unknown, { query }: { query: String }, { req }: { req: Request }) => {
       // const authorizationHeader = req.headers.get('Authorization');
       // if(!authorizationHeader){
       //   return "Unauthorised"
@@ -33,16 +33,16 @@ const resolvers = {
       // const user = await verifyUser(token as string)
       const cache = `himture-${query}`
       const cacheSearch = await SLINKS.get(cache)
-      if(cacheSearch){
-          const res:any = cacheSearch
-          console.log('===============================================')
-          console.log(res)
-          console.log('===============================================')
-          return res
+      if (cacheSearch) {
+        const res: any = cacheSearch
+        console.log('===============================================')
+        console.log(res)
+        console.log('===============================================')
+        return res
       }
-      else{
-        const res:any = await getAllShortURL("himture")
-        const fil = res.filter((a:any) => a.sLink.includes(query))
+      else {
+        const res: any = await getAllShortURL("himture")
+        const fil = res.filter((a: any) => a.sLink.includes(query))
         SLINKS.put(cache, fil, { expirationTtl: 60 })
         return fil
       }
@@ -74,9 +74,42 @@ const resolvers = {
   },
   Mutation: {
 
-    addUrl:async (_:unknown, {username, oLink, sLink, tag}:{username: string, oLink: string, sLink:string, tag:string}) => {
-      createShortUrl(oLink, sLink, username, tag)
-      return "Success"
+    addUrl: async (_: unknown, { username, oLink, sLink, tag =  'MyLink' }: { username: string, oLink: string, sLink: string, tag: string }) => {
+      try {
+        const res = createShortUrl(oLink, sLink, username)
+        return res
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return err;
+      }
+    },
+    updateUrl: async (_: unknown, { sLink, oLink, username }: { sLink: string, oLink: string, username: string }) => {
+      try {
+        updateShortUrl(sLink, oLink, username)
+        return "Success"
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return err;
+      }
+    },
+    deleteUrl: async (_: unknown, { username, sLink }: { username: string, sLink: string }) => {
+
+      try {
+        deleteShortUrl(username, sLink)
+        return "Success"
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return err;
+      }
     },
     signup: async (
       _: unknown,
@@ -169,24 +202,24 @@ const resolvers = {
   },
 };
 
-const verifyUser = async (token:string) => {
+const verifyUser = async (token: string) => {
   const verifier = CognitoJwtVerifier.create({
     userPoolId: userPoolId,
     tokenUse: "access",
     clientId: appClientId,
   });
-  
+
   try {
     const payload = await verifier.verify(
       token
     );
     return payload.username
-  } catch(error) {
+  } catch (error) {
     let err = "error";
-        if (error instanceof Error) {
-          err = error.message;
-        }
-        return err;
+    if (error instanceof Error) {
+      err = error.message;
+    }
+    return err;
   }
 }
 

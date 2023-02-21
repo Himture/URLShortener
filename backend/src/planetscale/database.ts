@@ -10,9 +10,10 @@ const connection = connect({
 const USER_TABLE = "user";
 const LINKS_TABLE = "links";
 
-export async function createShortUrl(oLink: string, sLink: string, username: string, tag: string) {
-    const result = await connection.execute(`INSERT INTO ${LINKS_TABLE} (oLink, sLink, username, tag) VALUES (?, ?, ?, ?);`, [oLink, sLink, username, tag]);
-    return result;
+export async function createShortUrl(oLink: string, sLink: string, username: string) {
+    const result = await connection.execute(`INSERT INTO ${LINKS_TABLE} (oLink, sLink, username) VALUES (?, ?, ?);`, [oLink, sLink, username]);
+    const res = JSON.stringify(result)
+    return res;
 }
 
 export async function getUrlByShortUrl(sLink: string) {
@@ -25,6 +26,11 @@ export async function getAllShortURL(username: String) {
     const query = `SELECT oLink, sLink, username, tag FROM ${LINKS_TABLE} WHERE username = ?;`;
     const result = await connection.execute(query, [username]);
     console.log(result)
+    return result.rows;
+}
+
+export async function updateShortUrl(sLink:string, oLink:string, username:string) {
+  const result = await connection.execute(`UPDATE ${LINKS_TABLE} SET oLink = ? WHERE sLink = ? AND username = ?`, [oLink, sLink, username]);
     return result.rows;
 }
 
