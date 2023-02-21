@@ -17,7 +17,12 @@ export const schema = createSchema({
       tag: String
     }
 
+    type sLink {
+      sLink: String!
+    }
+
     type Query {
+      incrementalSearch(query: String!): [sLink]
       getURL(sLink: String!): [Links]
       allUserURL(username: String!): [Links]
     }

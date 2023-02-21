@@ -24,6 +24,7 @@ export async function getUrlByShortUrl(sLink: string) {
 export async function getAllShortURL(username: String) {
     const query = `SELECT oLink, sLink, username, tag FROM ${LINKS_TABLE} WHERE username = ?;`;
     const result = await connection.execute(query, [username]);
+    console.log(result)
     return result.rows;
 }
 

@@ -1,4 +1,4 @@
-import { getUrlByShortUrl, createUser, getAllShortURL } from "../planetscale/database";
+import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl } from "../planetscale/database";
 import {
   CognitoIdentityProviderClient,
   SignUpCommand,
@@ -6,15 +6,47 @@ import {
   GlobalSignOutCommand,
   ConfirmSignUpCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
+import { KVNamespace } from '@cloudflare/workers-types'
 
-const userPoolId = "ap-south-1_avENjbeq1";
-const appClientId = "1ks1rkp3i7h8t84alt70hfs5h2";
+declare const SLINKS: KVNamespace
+
+const userPoolId = 'ap-south-1_OckXPNIFl';
+const appClientId = '3i9euoh46p7ksooio91395srai';
 const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({
   region: "ap-south-1",
 });
 
+export interface Env {
+  SLINKS: KVNamespace
+}
+
 const resolvers = {
   Query: {
+    incrementalSearch: async (_: unknown, {query}: {query:String}, {req}: {req: Request}) => {
+      // const authorizationHeader = req.headers.get('Authorization');
+      // if(!authorizationHeader){
+      //   return "Unauthorised"
+      // }
+      // const token = authorizationHeader?.replace('Bearer ', '');
+      // const queryy = req.headers.get('query');
+      // const user = await verifyUser(token as string)
+      const cache = `himture-${query}`
+      const cacheSearch = await SLINKS.get(cache)
+      if(cacheSearch){
+          const res:any = cacheSearch
+          console.log('===============================================')
+          console.log(res)
+          console.log('===============================================')
+          return res
+      }
+      else{
+        const res:any = await getAllShortURL("himture")
+        const fil = res.filter((a:any) => a.sLink.includes(query))
+        SLINKS.put(cache, fil, { expirationTtl: 60 })
+        return fil
+      }
+    },
     allUserURL: async (_: unknown, { username }: { username: string }) => {
       try {
         const res = getAllShortURL(username)
@@ -42,6 +74,10 @@ const resolvers = {
   },
   Mutation: {
 
+    addUrl:async (_:unknown, {username, oLink, sLink, tag}:{username: string, oLink: string, sLink:string, tag:string}) => {
+      createShortUrl(oLink, sLink, username, tag)
+      return "Success"
+    },
     signup: async (
       _: unknown,
       { email, password, username }: { username: string, email: string, password: string }
@@ -106,7 +142,7 @@ const resolvers = {
       });
       try {
         const response = await cognitoIdentityProviderClient.send(auth);
-        return response.AuthenticationResult?.IdToken;
+        return response.AuthenticationResult?.AccessToken;
       } catch (error) {
         let err = "error";
         if (error instanceof Error) {
@@ -132,5 +168,26 @@ const resolvers = {
     },
   },
 };
+
+const verifyUser = async (token:string) => {
+  const verifier = CognitoJwtVerifier.create({
+    userPoolId: userPoolId,
+    tokenUse: "access",
+    clientId: appClientId,
+  });
+  
+  try {
+    const payload = await verifier.verify(
+      token
+    );
+    return payload.username
+  } catch(error) {
+    let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return err;
+  }
+}
 
 export default resolvers;
