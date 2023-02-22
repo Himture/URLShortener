@@ -1,5 +1,4 @@
 import { connect } from "@planetscale/database";
-import { nanoid } from "nanoid";
 
 console.log("trying connection");
 const connection = connect({

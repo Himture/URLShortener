@@ -23,15 +23,14 @@ export interface Env {
 
 const resolvers = {
   Query: {
-    incrementalSearch: async (_: unknown, { query }: { query: String }, { req }: { req: Request }) => {
-      // const authorizationHeader = req.headers.get('Authorization');
-      // if(!authorizationHeader){
-      //   return "Unauthorised"
-      // }
-      // const token = authorizationHeader?.replace('Bearer ', '');
-      // const queryy = req.headers.get('query');
-      // const user = await verifyUser(token as string)
-      const cache = `himture-${query}`
+    incrementalSearch: async (_: unknown, { query }: { query: String }, ctx:any) => {
+      const authorizationHeader = ctx.request.headers.get('Authorization');
+      if(!authorizationHeader){
+        return "Unauthorised"
+      }
+      const token = authorizationHeader?.replace('Bearer ', '');
+      const user = await verifyUser(token as string)
+      const cache = `${user}-${query}`
       const cacheSearch = await SLINKS.get(cache)
       if (cacheSearch) {
         const res: any = cacheSearch
