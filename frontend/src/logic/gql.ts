@@ -1,4 +1,5 @@
 import { GraphQLClient, gql } from 'graphql-request'
+import { remToken } from './auth'
 
 const endpoint = 'https://graphql.himanshuoslash.workers.dev'
 const token = localStorage.getItem('Oslash')
@@ -38,9 +39,9 @@ export async function getURL(sLink: string) {
   return data.getURL
 }
 
-export async function addUrl(sLink: string) {
+export async function addUrl(oLink:string, sLink: string) {
   const query = gql`mutation{
-    addUrl(oLink:"", sLink:""){
+    addUrl(oLink:"${oLink}", sLink:"${sLink}"){
       message
     }
   }`
@@ -108,5 +109,6 @@ export async function logout(email: string) {
     logout(email:"${email}")
   }`
   const data = await graphQLClient.request(query)
+  remToken()
   return data.logout
 }
