@@ -3,7 +3,9 @@ import { CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, Glob
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { KVNamespace } from '@cloudflare/workers-types'
 
-declare const SLINKS: KVNamespace
+declare global {
+  const SLINKS: KVNamespace
+}
 
 const userPoolId = 'ap-south-1_OckXPNIFl';
 const appClientId = '3i9euoh46p7ksooio91395srai';
