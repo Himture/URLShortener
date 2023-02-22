@@ -4,8 +4,10 @@ import SignUp from "../components/SignUp.jsx";
 import UserConfirm from "../components/UserConfirm.jsx";
 import Links from "../layouts/Links.astro";
 import CreateLink  from "../components/CreateLink";
+import { allUserURL } from "../logic/gql.js";
+
 ---
 
 <Links>
-		<CreateLink/>
+		<CreateLink client:only/>
 </Links>
