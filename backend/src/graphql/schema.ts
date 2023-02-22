@@ -10,32 +10,43 @@ export const schema = createSchema({
       slinks: [String]
     }
 
-    type Links {
-      oLink: String!
-      sLink: String!
-      username: String!
+    type Link {
+      oLink: String
+      sLink: String
+      username: String
       tag: String
+    }
+
+    type LinksRes {
+      links: [Link]
+      message: String
     }
 
     type sLink {
       sLink: String!
     }
 
+    type dbRes {
+      insertId: String
+      message: String!
+    }
+
     type Query {
       incrementalSearch(query: String!): [sLink]
-      getURL(sLink: String!): [Links]
-      allUserURL(username: String!): [Links]
+      getURL(sLink: String!): LinksRes
+      allUserURL(username: String): LinksRes
     }
 
     type Mutation {
-      login(email: String, password: String, username: String): String
+      login(email: String, password: String): String
       confirmUser(username: String, code: String): String
       signup(email: String, password: String, username: String): String
       logout(email: String): String
 
-      addUrl(username:String, oLink:String, sLink:String, tag:String):String
-      updateUrl(sLink:String, oLink:String, username:String): String
-      deleteUrl(username:String, sLink:String): String
+      addUrl(oLink: String, sLink: String): dbRes
+      updateUrl(sLink: String, oLink: String): dbRes
+      addTag(sLink: String, tag: String): dbRes
+      deleteUrl(sLink: String): dbRes
     }
   `,
   resolvers,

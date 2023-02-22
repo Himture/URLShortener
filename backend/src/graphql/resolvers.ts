@@ -1,11 +1,5 @@
-import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl, updateShortUrl, deleteShortUrl } from "../planetscale/database";
-import {
-  CognitoIdentityProviderClient,
-  SignUpCommand,
-  InitiateAuthCommand,
-  GlobalSignOutCommand,
-  ConfirmSignUpCommand,
-} from "@aws-sdk/client-cognito-identity-provider";
+import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl, updateShortUrl, deleteShortUrl, addTag } from "../planetscale/database";
+import { CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, GlobalSignOutCommand, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { KVNamespace } from '@cloudflare/workers-types'
 
@@ -13,30 +7,19 @@ declare const SLINKS: KVNamespace
 
 const userPoolId = 'ap-south-1_OckXPNIFl';
 const appClientId = '3i9euoh46p7ksooio91395srai';
-const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({
-  region: "ap-south-1",
-});
-
-export interface Env {
-  SLINKS: KVNamespace
-}
+const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({ region: "ap-south-1" });
 
 const resolvers = {
   Query: {
-    incrementalSearch: async (_: unknown, { query }: { query: String }, ctx:any) => {
-      const authorizationHeader = ctx.request.headers.get('Authorization');
-      if(!authorizationHeader){
+    incrementalSearch: async (_: unknown, { query }: { query: String }, ctx: any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
         return "Unauthorised"
       }
-      const token = authorizationHeader?.replace('Bearer ', '');
-      const user = await verifyUser(token as string)
       const cache = `${user}-${query}`
       const cacheSearch = await SLINKS.get(cache)
       if (cacheSearch) {
         const res: any = cacheSearch
-        console.log('===============================================')
-        console.log(res)
-        console.log('===============================================')
         return res
       }
       else {
@@ -46,74 +29,121 @@ const resolvers = {
         return fil
       }
     },
-    allUserURL: async (_: unknown, { username }: { username: string }) => {
+    allUserURL: async (_: unknown, args:any, ctx: any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
+        return {message: "Unauthorized"}
+      }
       try {
-        const res = getAllShortURL(username)
-        return res
+        const res = await getAllShortURL(user)
+        return {
+          links: res,
+          message: "Success"
+        }
       } catch (error) {
         let err = "error";
         if (error instanceof Error) {
           err = error.message;
         }
-        return err;
+        return { message: err }
       }
     },
-    getURL: async (_: ParentNode, { sLink }: { sLink: string }) => {
+    getURL: async (_: ParentNode, { sLink }: { sLink: string }, ctx: any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
+        return {message:"Unauthorized"}
+      }
       try {
         const res = getUrlByShortUrl(sLink);
-        return res;
+        return {
+          links: res,
+          message: "Success" }
       } catch (error) {
         let err = "error";
         if (error instanceof Error) {
           err = error.message;
         }
-        return err;
+        return { message: err }
       }
     },
   },
   Mutation: {
 
-    addUrl: async (_: unknown, { username, oLink, sLink, tag =  'MyLink' }: { username: string, oLink: string, sLink: string, tag: string }) => {
+    addUrl: async (_: unknown, { oLink, sLink }: { oLink: string, sLink: string }, ctx: any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
+        return { message: "Unauthorized" }
+      }
       try {
-        const res = createShortUrl(oLink, sLink, username)
-        return res
+        const res = await createShortUrl(oLink, sLink, user)
+        return ({
+          insertId: res,
+          message: "Success"
+        })
       } catch (error) {
         let err = "error";
         if (error instanceof Error) {
           err = error.message;
         }
-        return err;
+        return { message: err }
       }
     },
-    updateUrl: async (_: unknown, { sLink, oLink, username }: { sLink: string, oLink: string, username: string }) => {
-      try {
-        updateShortUrl(sLink, oLink, username)
-        return "Success"
-      } catch (error) {
-        let err = "error";
-        if (error instanceof Error) {
-          err = error.message;
-        }
-        return err;
-      }
-    },
-    deleteUrl: async (_: unknown, { username, sLink }: { username: string, sLink: string }) => {
 
+    updateUrl: async (_: unknown, { sLink, oLink }: { sLink: string, oLink: string }, ctx: any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
+        return { message: "Unauthorized" }
+      }
       try {
-        deleteShortUrl(username, sLink)
-        return "Success"
+        const res = await updateShortUrl(sLink, oLink, user)
+        return { inserID: res,
+           message: "Success" }
       } catch (error) {
         let err = "error";
         if (error instanceof Error) {
           err = error.message;
         }
-        return err;
+        return { message: err }
       }
     },
-    signup: async (
-      _: unknown,
-      { email, password, username }: { username: string, email: string, password: string }
-    ) => {
+
+    deleteUrl: async (_: unknown, { sLink }: { sLink: string }, ctx:any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
+        return { message: "Unauthorized" }
+      }
+      try {
+        const res = await deleteShortUrl(user, sLink)
+        return { inserID: res,
+          message: "Success" }
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return { message: err }
+      }
+    },
+
+    addTag:async (_:unknown, {sLink, tag}:{sLink:string, tag:string}, ctx:any) => {
+      const user = await verifyUser(ctx)
+      if (!user) {
+        return { message: "Unauthorized" }
+      }
+      try {
+        const res = await addTag(tag, sLink, user)
+        return { inserID: res,
+          message: "Success" }
+      } catch (error) {
+        let err = "error";
+        if (error instanceof Error) {
+          err = error.message;
+        }
+        return { message: err }
+      }
+    },
+
+    signup: async ( _: unknown, { email, password, username }: { username: string, email: string, password: string } ) => {
       const signUp = new SignUpCommand({
         ClientId: appClientId,
         Username: username,
@@ -137,16 +167,9 @@ const resolvers = {
         return err;
       }
     },
-    confirmUser: async (
-      _: unknown,
-      { username, code }: { username: string, code: string }
-    ) => {
-      const confirmSignUpCommand = new ConfirmSignUpCommand({
-        ClientId: appClientId,
-        Username: username,
-        ConfirmationCode: code,
-      });
 
+    confirmUser: async ( _: unknown, { username, code }: { username: string, code: string } ) => {
+      const confirmSignUpCommand = new ConfirmSignUpCommand({ ClientId: appClientId, Username: username, ConfirmationCode: code });
       try {
         const res = await cognitoIdentityProviderClient.send(
           confirmSignUpCommand
@@ -160,17 +183,12 @@ const resolvers = {
         return err;
       }
     },
-    login: async (
-      _: unknown,
-      { email, password }: { email: string, password: string }
-    ) => {
+
+    login: async (_: unknown, { email, password }: { email: string, password: string }) => {
       const auth = new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
         ClientId: appClientId,
-        AuthParameters: {
-          USERNAME: email,
-          PASSWORD: password,
-        },
+        AuthParameters: { USERNAME: email, PASSWORD: password },
       });
       try {
         const response = await cognitoIdentityProviderClient.send(auth);
@@ -183,6 +201,7 @@ const resolvers = {
         return err;
       }
     },
+
     logout: async (_: unknown, { idToken }: { idToken: string }) => {
       const signOut = new GlobalSignOutCommand({
         AccessToken: idToken,
@@ -201,24 +220,31 @@ const resolvers = {
   },
 };
 
-const verifyUser = async (token: string) => {
+const verifyUser = async (ctx: any) => {
+  const authorizationHeader = ctx.request.headers.get('Authorization');
+  const token = authorizationHeader?.replace('Bearer ', '');
   const verifier = CognitoJwtVerifier.create({
     userPoolId: userPoolId,
     tokenUse: "access",
     clientId: appClientId,
   });
 
-  try {
-    const payload = await verifier.verify(
-      token
-    );
-    return payload.username
-  } catch (error) {
-    let err = "error";
-    if (error instanceof Error) {
-      err = error.message;
+  if (authorizationHeader) {
+    try {
+      const payload = await verifier.verify(
+        token
+      );
+      return payload.username
+    } catch (error) {
+      let err = "error";
+      if (error instanceof Error) {
+        err = error.message;
+      }
+      return err;
     }
-    return err;
+  }
+  else {
+    return null
   }
 }
 
