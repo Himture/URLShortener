@@ -24,7 +24,7 @@ export default function ShowAllLinks() {
   }, []);
 
   const links = res?.map((links) => (
-    <div className="item bg-white m-10 rounded-lg">
+    <div key = {links.sLink} className="item bg-white m-10 rounded-lg">
       <div className="item-info">
         <p id={links.oLink} className="text-lg">
           <a href={"https://" + links.oLink} target="_blank">
@@ -39,7 +39,7 @@ export default function ShowAllLinks() {
       <div className="item-actions">
         <button
         onClick={handledelete}
-          class="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Edit
         </button>
