@@ -1,16 +1,9 @@
 ---
-import Login from "../components/Login.jsx";
-import SignUp from "../components/SignUp.jsx";
-import UserConfirm from "../components/UserConfirm.jsx";
+import Login from "../components/Login";
+import ShowAllLinks from "../components/ShowAllLinks";
 import Links from "../layouts/Links.astro";
-import CreateLink  from "../components/CreateLink";
-import { allUserURL } from "../logic/gql.js";
-import DeleteLink from "../components/DeleteLink.jsx";
-import UpdateLink from "../components/UpdateLink.jsx";
-import ShowAllLinks from "../components/ShowAllLinks.jsx";
-
 ---
 
 <Links>
-		<ShowAllLinks client:only/>
+	<ShowAllLinks client:only/>
 </Links>

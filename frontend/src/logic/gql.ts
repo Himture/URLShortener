@@ -49,9 +49,9 @@ export async function addUrl(oLink:string, sLink: string) {
   return data.addUrl.message
 }
 
-export async function addTag(sLink: string) {
+export async function addTag(sLink: string, tag:string) {
   const query = gql`mutation{
-    addTag(sLink:"${sLink}"){
+    addTag(sLink:"${sLink}", tag:"${tag}"){
       message
     }
   }`
