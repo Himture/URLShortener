@@ -9,7 +9,15 @@ declare global {
 
 const userPoolId = 'ap-south-1_OckXPNIFl';
 const appClientId = '3i9euoh46p7ksooio91395srai';
-const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({ region: "ap-south-1" });
+const AWS_ACCESS_KEY_ID = 'AKIA5BDLXBR2BOG3CKVE'
+const AWS_SECRET_ACCESS_KEY = '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'
+const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({ 
+  region: "ap-south-1",
+  credentials:{
+    accessKeyId : AWS_ACCESS_KEY_ID,
+    secretAccessKey : AWS_SECRET_ACCESS_KEY
+  }
+ });
 
 const resolvers = {
   Query: {
@@ -115,7 +123,7 @@ const resolvers = {
         return { message: "Unauthorized" }
       }
       try {
-        const res = await deleteShortUrl(user, sLink)
+        const res = await deleteShortUrl(sLink, user)
         return { inserID: res,
           message: "Success" }
       } catch (error) {

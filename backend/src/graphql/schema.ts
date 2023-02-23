@@ -41,7 +41,7 @@ export const schema = createSchema({
       login(email: String, password: String): String
       confirmUser(username: String, code: String): String
       signup(email: String, password: String, username: String): String
-      logout(email: String): String
+      logout(idToken: String): String
 
       addUrl(oLink: String, sLink: String): dbRes
       updateUrl(sLink: String, oLink: String): dbRes

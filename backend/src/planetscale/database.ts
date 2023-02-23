@@ -33,6 +33,7 @@ export async function updateShortUrl(sLink:string, oLink:string, username:string
 
 export async function deleteShortUrl(sLink: string, username:string) {
     const result = await connection.execute(`DELETE FROM ${LINKS_TABLE} WHERE sLink = ? AND username = ?`, [sLink, username]);
+    console.log(sLink, username, result)
     return result.insertId;
 }
 

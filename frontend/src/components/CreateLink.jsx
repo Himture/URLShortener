@@ -59,9 +59,9 @@ export default function CreateLink() {
   }
 }
 
-function onC(){
+async function onC(){
   const oLink = document.getElementById('oLink').value
   const sLink = document.getElementById('sLink').value
-  addUrl(link, "")
-  console.log(link)
+  const res = await addUrl(oLink, sLink)
+  window.alert(res)
  }

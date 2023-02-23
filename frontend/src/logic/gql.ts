@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request'
-import { remToken } from './auth'
-0
-const endpoint = 'https://graphql.himanshuoslash.workers.dev'
+import { remToken, setToken } from './auth'
+
+const endpoint = 'http://127.0.0.1:8787'
 const token = localStorage.getItem('Oslash')
 const graphQLClient = new GraphQLClient(endpoint, {
   headers: {
@@ -85,6 +85,8 @@ export async function login(email: string, password: string) {
     login(email:"${email}", password:"${password}")
   }`
   const data = await graphQLClient.request(query)
+  if(data.login.length > 50 ) {
+  setToken(data.login) }
   return data.login
 }
 
@@ -104,9 +106,9 @@ export async function confirmUser(username: string, code: string) {
   return data.confirmUser
 }
 
-export async function logout(email: string) {
+export async function logout(idToken: string) {
   const query = gql`mutation{
-    logout(email:"${email}")
+    logout(idToken:"${token}")
   }`
   const data = await graphQLClient.request(query)
   remToken()

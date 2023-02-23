@@ -5,9 +5,12 @@ import UserConfirm from "../components/UserConfirm.jsx";
 import Links from "../layouts/Links.astro";
 import CreateLink  from "../components/CreateLink";
 import { allUserURL } from "../logic/gql.js";
+import DeleteLink from "../components/DeleteLink.jsx";
+import UpdateLink from "../components/UpdateLink.jsx";
+import ShowAllLinks from "../components/ShowAllLinks.jsx";
 
 ---
 
 <Links>
-		<CreateLink client:only/>
+		<ShowAllLinks client:only/>
 </Links>
