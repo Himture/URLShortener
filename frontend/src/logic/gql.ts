@@ -1,6 +1,6 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { remToken } from './auth'
-
+0
 const endpoint = 'https://graphql.himanshuoslash.workers.dev'
 const token = localStorage.getItem('Oslash')
 const graphQLClient = new GraphQLClient(endpoint, {
