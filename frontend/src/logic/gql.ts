@@ -51,6 +51,14 @@ export async function getURL(sLink: string) {
   return data.getURL
 }
 
+export async function getUsername() {
+  const query = gql`{
+    getUsername
+  }`
+  const data = await graphQLClient.request(query)
+  return data.getUsername
+}
+
 export async function addUrl(oLink:string, sLink: string) {
   const query = gql`mutation{
     addUrl(oLink:"${oLink}", sLink:"${sLink}"){

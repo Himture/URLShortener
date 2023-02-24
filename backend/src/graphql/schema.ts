@@ -36,6 +36,7 @@ export const schema = createSchema({
       incrementalSearch(query: String!): [sLink]
       getURL(sLink: String!): LinksRes
       allUserURL(username: String): LinksRes
+      getUsername: String
     }
 
     type Mutation {

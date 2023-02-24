@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { authenticate } from "../logic/auth";
-import { allUserURL, deleteUrl, incrementalSearch, updateUrl } from "../logic/gql";
+import { allUserURL, deleteUrl, incrementalSearch, updateUrl, getUsername } from "../logic/gql";
 import "./App.css";
 
 export default function ShowAllLinks() {
@@ -10,7 +10,7 @@ export default function ShowAllLinks() {
 
   useEffect(() => {
     async function getToken() {
-      const token = await authenticate().then((t) => {
+      await authenticate().then((t) => {
         setoken(t);
       });
     }

@@ -41,6 +41,9 @@ const resolvers = {
         return fil
       // }
     },
+    getUsername:async (_:unknown, args:any, ctx: any) => {
+      return await verifyUser(ctx)
+    },
     allUserURL: async (_: unknown, args:any, ctx: any) => {
       const user = await verifyUser(ctx)
       if (!user) {
