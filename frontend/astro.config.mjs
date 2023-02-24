@@ -10,3 +10,9 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   integrations: [react(), tailwind()]
 });
+
+module.exports = {
+  moduleNameMapper: {
+    "#node-web-compat": "./node-web-compat-node.js",
+  },
+};
