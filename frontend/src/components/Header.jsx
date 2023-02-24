@@ -1,18 +1,14 @@
 import { authenticate } from "../logic/auth";
 import { useState, useEffect } from "react";
-import { logout, getUsername } from "../logic/gql";
+import { logout } from "../logic/gql";
 
 export default function Header() {
   const [token, setoken] = useState();
-  const [username, setUsername] = useState()
 
   useEffect(() => {
     async function getToken() {
       await authenticate().then((t) => {
         setoken(t);
-      });
-      await getUsername().then((t) => {
-        setUsername(t)
       })
     }
     getToken();
@@ -24,7 +20,7 @@ export default function Header() {
         <div className="container flex flex-wrap items-center justify-between mx-auto">
           <a href="/" className="flex items-center">
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-              Welcome, {username}
+              URL Shortener
             </span>
           </a>
           <button

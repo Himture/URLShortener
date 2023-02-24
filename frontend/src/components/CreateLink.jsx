@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { authenticate } from "../logic/auth";
 import { allUserURL } from '../logic/gql'
 import { addUrl } from "../logic/gql";
+import NotLogedIn from "./NotLogedIn";
 
 
 export default function CreateLink() {
@@ -55,7 +56,7 @@ export default function CreateLink() {
       </div>
     );
   } else {
-    return <h1>You have to be logged in</h1>;
+    return <NotLogedIn />
   }
 }
 

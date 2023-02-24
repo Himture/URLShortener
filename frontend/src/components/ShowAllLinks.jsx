@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { authenticate } from "../logic/auth";
 import { allUserURL, deleteUrl, incrementalSearch, updateUrl, getUsername } from "../logic/gql";
 import "./App.css";
+import NotLogedIn from "./NotLogedIn";
 
 export default function ShowAllLinks() {
   const [token, setoken] = useState();
@@ -125,7 +126,7 @@ export default function ShowAllLinks() {
       </>
     );
   } else {
-    return <h1>You have to be logged in</h1>;
+    return <NotLogedIn />
   }
 }
 
