@@ -1,11 +1,7 @@
 import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl, updateShortUrl, deleteShortUrl, addTag } from "../planetscale/database";
 import { CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, GlobalSignOutCommand, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
-import { KVNamespace } from '@cloudflare/workers-types'
 
-declare global {
-  const SLINKS: KVNamespace
-}
 
 const userPoolId = 'ap-south-1_OckXPNIFl';
 const appClientId = '3i9euoh46p7ksooio91395srai';
@@ -26,18 +22,24 @@ const resolvers = {
       if (!user) {
         return "Unauthorised"
       }
-      const cache = `${user}-${query}`
-      const cacheSearch = await SLINKS.get(cache)
-      if (cacheSearch) {
-        const res: any = cacheSearch
-        return res
-      }
-      else {
-        const res: any = await getAllShortURL("himture")
+      // console.log("----------yaha toh aaya--------------------")
+      // const cache = `${user}-${query}`
+      // console.log(cache)
+      // console.log(process.env.SLINK)
+      // const cacheSearch = await SLINK.get(cache)
+      // console.log("------------------i was here------------------------")
+      // console.log(cacheSearch)
+      // if (cacheSearch) {
+      //   const res: any = cacheSearch
+      //   return res
+      // }
+      // else {
+        const res: any = await getAllShortURL(user)
         const fil = res.filter((a: any) => a.sLink.includes(query))
-        SLINKS.put(cache, fil, { expirationTtl: 60 })
+        // SLINKS.put(cache, fil, { expirationTtl: 60 })
+        console.log(fil[0])
         return fil
-      }
+      // }
     },
     allUserURL: async (_: unknown, args:any, ctx: any) => {
       const user = await verifyUser(ctx)

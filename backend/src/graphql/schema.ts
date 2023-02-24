@@ -24,6 +24,7 @@ export const schema = createSchema({
 
     type sLink {
       sLink: String!
+      oLink: String!
     }
 
     type dbRes {

@@ -9,6 +9,18 @@ const graphQLClient = new GraphQLClient(endpoint, {
   },
 })
 
+export async function incrementalSearch(quer:string) {
+  const query = gql` {
+    incrementalSearch(query: "${quer}") {
+      sLink
+      oLink
+    }
+  }`
+  const data = await graphQLClient.request(query)
+  console.log(data.incrementalSearch)
+  return data.incrementalSearch
+}
+
 export async function allUserURL(username: string) {
   const query = gql`{
     allUserURL(username: "${username}") {
