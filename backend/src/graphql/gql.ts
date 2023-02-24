@@ -9,7 +9,7 @@ export const gql = createYoga({
   landingPage: false,
   graphqlEndpoint: "/",
   cors: {
-    origin: 'https://oslashreplica.pages.dev/',
+    origin: 'https://oslashreplica.pages.dev',
     methods: ['POST']
   }
 });
