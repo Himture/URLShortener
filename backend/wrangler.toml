@@ -4,7 +4,4 @@ compatibility_date = "2023-02-16"
 account_id = "c1327a2fd0691066bd51c83fb1fad5c7"
 node_compat = true
 
-kv_namespaces = [{ binding = "SLINKS", preview_id = "bf2b083156264c05bd2c297e5031ba1a", id = "bf2b083156264c05bd2c297e5031ba1a" } ]
-
-[env.production]
 kv_namespaces = [{ binding = "SLINKS", id = "deec6ad1a5eb4f7a81b02270129c4f6e" } ]
