@@ -8,4 +8,8 @@ export const gql = createYoga({
   schema,
   landingPage: false,
   graphqlEndpoint: "/",
+  cors: {
+    origin: 'https://oslashreplica.pages.dev/',
+    methods: ['POST']
+  }
 });
