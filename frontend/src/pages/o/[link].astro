@@ -9,7 +9,6 @@ var oLink = "/";
 if (res.links.length > 0) {
   oLink = "https://" + res.links[0].oLink;
 } else {
-  console.log("I came to else");
   oLink = "/";
 }
 ---
@@ -23,7 +22,7 @@ if (res.links.length > 0) {
     </head>
   <body>
     <h1>The short link takes you to .....</h1>
-    <!-- {
+    {
       oLink == "/" ? (
         <a id="link" href={oLink}>
             Unknown short link... Redirecting to home page...
@@ -33,13 +32,13 @@ if (res.links.length > 0) {
           Redirecting...
         </a>
       )
-    } -->
+    }
 
-    <!-- <script>
+    <script>
       document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("link")?.click();
         window.location.href = "/";
       });
-    </script> -->
+    </script>
   </body>
 </html>
