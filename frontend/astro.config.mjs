@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 import react from "@astrojs/react";
@@ -9,11 +10,8 @@ import tailwind from "@astrojs/tailwind";
 // https://astro.build/config
 
 // https://astro.build/config
-import vercel from "@astrojs/vercel/edge";
-
-// https://astro.build/config
 export default defineConfig({
   integrations: [react(), tailwind()],
   output: 'server',
-  adapter: vercel(),
+  adapter: cloudflare(),
 });
