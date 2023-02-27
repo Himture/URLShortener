@@ -1,0 +1,1 @@
+import{j as e}from"./jsx-runtime.d49c4dfa.js";function r(){return e.jsx(e.Fragment,{children:e.jsx("div",{className:"flex h-screen items-center justify-center bg-gray-400",children:e.jsx("div",{className:"rounded-md bg-blue-700 py-4 px-6 text-white",children:"You have to be logged in..."})})})}export{r as N};
