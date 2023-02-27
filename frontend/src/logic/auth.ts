@@ -1,19 +1,19 @@
 
 export function setToken(token:string) {
     if (typeof window !== 'undefined') {
-        localStorage.setItem('Oslash', token)
+        window.localStorage.setItem('Oslash', token)
     }
 }
 
 export function remToken(){
     if (typeof window !== 'undefined') {
-        localStorage.removeItem('Oslash')
+        window.localStorage.removeItem('Oslash')
     }
 }
 
 export async function authenticate() {
     if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('Oslash')
+        const token = window.localStorage.getItem('Oslash')
     if(token){
         return "Pass"
     }
