@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { remToken, setToken } from './auth'
 
-const endpoint = 'http://graphql-production.himanshuoslash.workers.dev/'
+const endpoint = 'https://graphql-production.himanshuoslash.workers.dev/'
 var token = ""
 if (typeof window !== 'undefined') {
   token = window.localStorage.getItem('Oslash') || ""
