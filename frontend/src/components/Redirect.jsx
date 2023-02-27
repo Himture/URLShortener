@@ -1,11 +1,23 @@
+import { useEffect, useState } from "react";
+import { getURL } from "../logic/gql"
 
+export default function Redirect() {
+  const { link } = Astro.props;
+  const [ oLink, setoLink ] = useState()
 
-export default function handler(req, res) {
-  const { pathname } = req.url;
+  useEffect(() => {
+    async function getoLink() {
+      await getURL(link).then((t) => {
+        setoLink(t);
+      });
+    }
+    getoLink()
+  })
+  console.log(oLink)
 
   // Check if the pathname contains the string "/redirect-me"
-  if (true) {
-    Astro.redirect("https://google.com");
+  if (oLink) {
+    Astro.redirect(oLink);
   } else {
     return (
       <html>
