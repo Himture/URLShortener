@@ -1,0 +1,38 @@
+---
+import { getURL } from "../../logic/gql";
+
+const { link } = Astro.params;
+
+const res = await getURL(link || "");
+
+var oLink = "/";
+if (res.links.length > 0) {
+  oLink = "https://" + res.links[0].oLink;
+} else {
+  console.log("I came to else");
+  oLink = "/";
+}
+---
+
+<html>
+  <body>
+    {
+      oLink == "/" ? (
+        <a id="link" href={oLink}>
+            Unknown short link... Redirecting to home page...
+        </a>
+      ) : (
+        <a id="link" href={oLink} target="_blank">
+          Redirecting...
+        </a>
+      )
+    }
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("link")?.click();
+        window.location.href = "/";
+      });
+    </script>
+  </body>
+</html>
