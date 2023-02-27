@@ -14,6 +14,11 @@ export async function createShortUrl(oLink: string, sLink: string, username: str
     return result.insertId;
 }
 
+export async function searchURL(sLink:string) {
+  const result = await connection.execute(`SELECT oLink, sLink from ${LINKS_TABLE} WHERE sLink LIKE ?`,[sLink+"%"])
+  return result.rows
+}
+
 export async function getUrlByShortUrl(sLink: string) {
     const query = `SELECT oLink, sLink FROM ${LINKS_TABLE} WHERE sLink = ?;`;
     const result = await connection.execute(query, [sLink]);

@@ -36,7 +36,6 @@ export default function ShowAllLinks() {
   }, [search]);
 
   function handleSearch() {
-    setTimeout(300)
     const search = document.getElementById("default-search").value;
     setSearch(search);
     console.log("You clicked search");

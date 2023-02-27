@@ -1,7 +1,6 @@
-import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl, updateShortUrl, deleteShortUrl, addTag } from "../planetscale/database";
+import { getUrlByShortUrl, createUser, getAllShortURL, createShortUrl, updateShortUrl, deleteShortUrl, addTag, searchURL } from "../planetscale/database";
 import { CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, GlobalSignOutCommand, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
-
 
 const userPoolId = 'ap-south-1_OckXPNIFl';
 const appClientId = '3i9euoh46p7ksooio91395srai';
@@ -17,28 +16,27 @@ const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({
 
 const resolvers = {
   Query: {
-    incrementalSearch: async (_: unknown, { query }: { query: String }, ctx: any) => {
+    incrementalSearch: async (_: unknown, { query }: { query: string }, ctx: any) => {
       const user = await verifyUser(ctx)
       if (!user) {
         return "Unauthorised"
       }
-      // console.log("----------yaha toh aaya--------------------")
       // const cache = `${user}-${query}`
       // console.log(cache)
-      // console.log(process.env.SLINK)
-      // const cacheSearch = await SLINK.get(cache)
+      // const data = await kv.get(cache)
+      // // const cacheSearch = await SLINK.get(cache)
       // console.log("------------------i was here------------------------")
-      // console.log(cacheSearch)
-      // if (cacheSearch) {
-      //   const res: any = cacheSearch
+      // console.log(data)
+      // if (data) {
+      //   const res: any = data
+      //   console.log("cache was used.........................................")
       //   return res
       // }
       // else {
-        const res: any = await getAllShortURL(user)
-        const fil = res.filter((a: any) => a.sLink.includes(query))
-        // SLINKS.put(cache, fil, { expirationTtl: 60 })
-        console.log(fil[0])
-        return fil
+        const res: any = await searchURL(query)
+        // kv.set(cache, res)
+        // console.log("success to set value")
+        return res
       // }
     },
     getUsername:async (_:unknown, args:any, ctx: any) => {
