@@ -7,6 +7,8 @@ import NotLogedIn from "./NotLogedIn";
 
 export default function CreateLink() {
   const [token, setoken] = useState();
+  const [oLink, setoLink] = useState()
+  const [sLink, setsLink] = useState()
 
   useEffect(() => {
     async function getToken() {
@@ -14,6 +16,13 @@ export default function CreateLink() {
     }
     getToken()
   }, [])
+
+  async function onC(){
+    const res = await addUrl(oLink, sLink)
+    window.alert(res)
+    setoLink("")
+    setsLink("")
+   }
 
   if (token) {
     return (
@@ -30,6 +39,7 @@ export default function CreateLink() {
               <input
               id = "oLink"
                 type="Link"
+                onChange={(e) => setoLink(e.target.value)}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
@@ -41,6 +51,7 @@ export default function CreateLink() {
               <input
               id = "sLink"
                 type="Link"
+                onChange={(e) => setsLink(e.target.value)}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
@@ -59,10 +70,3 @@ export default function CreateLink() {
     return <NotLogedIn />
   }
 }
-
-async function onC(){
-  const oLink = document.getElementById('oLink').value
-  const sLink = document.getElementById('sLink').value
-  const res = await addUrl(oLink, sLink)
-  window.alert(res)
- }

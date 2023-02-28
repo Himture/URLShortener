@@ -14,14 +14,15 @@ export async function createShortUrl(oLink: string, sLink: string, username: str
     return result.insertId;
 }
 
-export async function searchURL(sLink:string) {
-  const result = await connection.execute(`SELECT oLink, sLink from ${LINKS_TABLE} WHERE sLink LIKE ?`,[sLink+"%"])
+export async function searchURL(sLink:string, username:string) {
+  const result = await connection.execute(`SELECT oLink, sLink, tag from ${LINKS_TABLE} WHERE sLink LIKE ? AND username = ?`,[sLink+"%",username])
   return result.rows
 }
 
-export async function getUrlByShortUrl(sLink: string) {
-    const query = `SELECT oLink, sLink FROM ${LINKS_TABLE} WHERE sLink = ?;`;
-    const result = await connection.execute(query, [sLink]);
+export async function getUrlByShortUrl(sLink: string, username:string) {
+    const query = `SELECT oLink, sLink FROM ${LINKS_TABLE} WHERE sLink = ? AND username = ?`;
+    const result = await connection.execute(query, [sLink, username]);
+    console.log(result.rows)
     return result.rows;
   }
 
@@ -42,9 +43,9 @@ export async function deleteShortUrl(sLink: string, username:string) {
     return result.insertId;
 }
 
-export async function createUser( username: string, email: string ) {
-  const query = `INSERT INTO ${USER_TABLE} (email, username) VALUES (?, ?)`
-  const result = await connection.execute(query, [email, username]);
+export async function createUser( name:string, username: string, email: string ) {
+  const query = `INSERT INTO ${USER_TABLE} (name, email, username) VALUES (?, ?, ?)`
+  const result = await connection.execute(query, [name, email, username]);
   return result.insertId;
 }
 

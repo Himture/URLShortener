@@ -18,6 +18,7 @@ export async function incrementalSearch(quer:string) {
     incrementalSearch(query: "${quer}") {
       sLink
       oLink
+      tag
     }
   }`
   const data = await graphQLClient.request(query)
@@ -114,9 +115,9 @@ export async function login(email: string, password: string) {
   return data.login
 }
 
-export async function signup(email: string, password: string, username: string) {
+export async function signup(name:string, email: string, password: string, username: string) {
   const query = gql`mutation{
-    signup(email:"${email}", password:"${password}", username:"${username}")
+    signup(name:"${name}",email:"${email}", password:"${password}", username:"${username}")
   }`
   const data = await graphQLClient.request(query)
   return data.signup

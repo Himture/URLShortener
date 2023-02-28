@@ -25,6 +25,7 @@ export const schema = createSchema({
     type sLink {
       sLink: String!
       oLink: String!
+      tag: String
     }
 
     type dbRes {
@@ -42,7 +43,7 @@ export const schema = createSchema({
     type Mutation {
       login(email: String, password: String): String
       confirmUser(username: String, code: String): String
-      signup(email: String, password: String, username: String): String
+      signup(name:String, email: String, password: String, username: String): String
       logout(idToken: String): String
 
       addUrl(oLink: String, sLink: String): dbRes

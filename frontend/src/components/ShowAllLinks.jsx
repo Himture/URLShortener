@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { authenticate } from "../logic/auth";
-import { allUserURL, deleteUrl, incrementalSearch, updateUrl, getUsername } from "../logic/gql";
+import {
+  allUserURL,
+  deleteUrl,
+  incrementalSearch,
+  updateUrl,
+  addTag,
+} from "../logic/gql";
 import "./App.css";
 import NotLogedIn from "./NotLogedIn";
 
 export default function ShowAllLinks() {
   const [token, setoken] = useState();
   const [res, setRes] = useState();
+  const [tags, settags] = useState();
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState();
 
   useEffect(() => {
     async function getToken() {
@@ -16,63 +24,115 @@ export default function ShowAllLinks() {
       });
     }
     getToken();
-    console.log(search);
     if (!search) {
       async function getData() {
         await allUserURL(token).then((t) => {
-          console.log(t.links);
           setRes(t.links);
+          const rectag = [
+            ...new Set(t.links?.map((links) => links.tag).flat()),
+          ];
+          rectag.sort();
+          settags(rectag);
         });
       }
       getData();
     } else {
       async function getData() {
-        const data = await incrementalSearch(search)
-        console.log(data)
-        setRes(data)
+        const data = await incrementalSearch(search);
+        console.log("api call happened");
+        setRes(data);
       }
       getData();
     }
-  }, [search]);
+  }, [search, activeTab]);
 
-  function handleSearch() {
-    const search = document.getElementById("default-search").value;
-    setSearch(search);
-    console.log("You clicked search");
+  function handleSearch(event) {
+    setTimeout(() => {
+      const searching = event.target.value;
+      setSearch(searching);
+      console.log("You clicked search");
+    }, 300);
   }
-  console.log('i am here after search '+res)
 
-  const links = res?.map((links) => (
-    <div key={links.sLink} className="item bg-white m-10 rounded-lg">
-      <div className="item-info">
-        <p id={links.oLink} className="text-lg">
-          <a href={"https://" + links.oLink} target="_blank">
-            o/{links.sLink}
-          </a>
-        </p>
-        <p id={links.sLink} className="text-sm">
-          {links.oLink}
-        </p>
-        <p id={links.tag}>{links.tag}</p>
+  async function handleDelete(event) {
+    if (confirm("Are you sure")) {
+      window.alert(event.target.value);
+      const res = await deleteUrl(event.target.value);
+      window.alert(res);
+      window.location.reload();
+    } else {
+      txt = "You pressed Cancel!";
+    }
+  }
+
+  async function handletag(event) {
+    const sLink = event.target.value;
+    const val = prompt("Enter the tag for o/" + sLink);
+    if(val){
+    const res = await addTag(sLink, val);
+    window.alert(res);}
+  }
+
+  async function handleEdit(event) {
+    const sLink = event.target.value;
+    const val = prompt("Enter new link for o/" + sLink);
+    if(val){
+    const res = await updateUrl(sLink, val);
+    window.alert(res);}
+  }
+
+  const links = tags?.map((tag) => {
+    return (
+      <div key={tag} className="tab overflow-visible">
+        {tag == null ? <h1 className="mt-10 ml-10 text-2xl mb-0">No Tag</h1> : <h1 className="mt-10 ml-10 text-2xl mb-0">{tag}</h1>}
+        {res?.map((links) => {
+          if (links.tag == tag) {
+            return (
+              <div
+                key={links.sLink}
+                className="tabcontent item bg-white m-10 rounded-lg"
+              >
+                <div className="item-info">
+                  <p id={links.oLink} className="text-lg">
+                    <a href={"https://" + links.oLink} target="_blank">
+                      o/{links.sLink}
+                    </a>
+                  </p>
+                  <p id={links.sLink} className="text-sm">
+                    {links.oLink}
+                  </p>
+                  <p id={links.tag}>{links.tag}</p>
+                </div>
+                <div className="item-actions">
+                  <button
+                    value={links.sLink}
+                    onClick={handleEdit}
+                    className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    value={links.sLink}
+                    onClick={handletag}
+                    className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    {links.tag ? "Edit tag" : "Add tag"}
+                  </button>
+                  <button
+                    value={links.sLink}
+                    onClick={handleDelete}
+                    className="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            );
+          }
+        })}
       </div>
-      <div className="item-actions">
-        <button
-          value={links.sLink}
-          onClick={handleEdit}
-          className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Edit
-        </button>
-        <button
-          value={links.sLink}
-          onClick={handleChange}
-          className="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  ));
+    );
+  });
 
   if (token) {
     return (
@@ -125,24 +185,6 @@ export default function ShowAllLinks() {
       </>
     );
   } else {
-    return <NotLogedIn />
+    return <NotLogedIn />;
   }
-}
-
-async function handleChange(event) {
-  if (confirm("Are you sure")) {
-    window.alert(event.target.value)
-    const res = await deleteUrl(event.target.value);
-    window.alert(res);
-    window.location.reload();
-  } else {
-    txt = "You pressed Cancel!";
-  }
-}
-
-async function handleEdit(event) {
-  const sLink = event.target.value
-  const val = prompt("Enter new link for o/"+sLink)
-  const res = await updateUrl(sLink, val)
-  window.alert(res)
 }

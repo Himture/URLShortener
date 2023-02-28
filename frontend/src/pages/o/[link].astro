@@ -1,40 +1,16 @@
 ---
 import { getURL } from "../../logic/gql";
 
-const { link } = Astro.params;
+const {link} = Astro.params
 
-const res = await getURL(link || "");
+console.log(link)
+let olink = await getURL(link || "")
+console.log(olink)
 
-var oLink = "/";
-if (res.links.length > 0) {
-  oLink = "https://" + res.links[0].oLink;
-} else {
-  console.log("I came to else");
-  oLink = "/";
+if(olink){
+    olink = "https://" + olink
 }
 
-console.log(oLink);
 ---
 
-<html>
-  <body>
-    {
-      oLink == "/" ? (
-        <a id="link" href={oLink}>
-            Unknown short link... Redirecting to home page...
-        </a>
-      ) : (
-        <a id="link" href={oLink} target="_blank">
-          Redirecting...
-        </a>
-      )
-    }
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("link")?.click();
-        window.location.href = "/";
-      });
-    </script>
-  </body>
-</html>
+<h1>{olink}</h1>

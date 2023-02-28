@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { confirmUser } from "../logic/gql";
 
 export default function ConfirmUser() {
-  const [token, setoken] = useState();
+  const [token, setoken] = useState("")
+  const [username, setusername] = useState("")
+  const [code, setcode] = useState("")
 
   useEffect(() => {
     async function getToken() {
@@ -12,6 +14,12 @@ export default function ConfirmUser() {
     }
     getToken();
   }, []);
+
+  async function onC() {
+    const res = await confirmUser(username, code);
+    window.alert(res);
+    window.location = "/";
+  }
 
   if (!token) {
     return (
@@ -30,6 +38,7 @@ export default function ConfirmUser() {
             <input
               id="username"
               type="username"
+              onChange={(e) => setusername(e.target.value)}
               className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
             <label
@@ -41,6 +50,7 @@ export default function ConfirmUser() {
             <input
               id="code"
               type="password"
+              onChange={(e) => setcode(e.target.value)}
               className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
           </div>
@@ -58,12 +68,4 @@ export default function ConfirmUser() {
   } else {
     return <>{(window.location = "/")}</>;
   }
-}
-
-async function onC() {
-  const username = document.getElementById("username").value;
-  const code = document.getElementById("code").value;
-  const res = await confirmUser(username, code);
-  window.alert(res);
-  window.location = "/";
 }

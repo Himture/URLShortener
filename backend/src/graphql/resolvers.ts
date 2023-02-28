@@ -33,7 +33,7 @@ const resolvers = {
       //   return res
       // }
       // else {
-        const res: any = await searchURL(query)
+        const res: any = await searchURL(query,user)
         // kv.set(cache, res)
         // console.log("success to set value")
         return res
@@ -67,7 +67,7 @@ const resolvers = {
         return {message:"Unauthorized"}
       }
       try {
-        const res = getUrlByShortUrl(sLink);
+        const res = getUrlByShortUrl(sLink, user);
         return {
           links: res,
           message: "Success" }
@@ -156,7 +156,7 @@ const resolvers = {
       }
     },
 
-    signup: async ( _: unknown, { email, password, username }: { username: string, email: string, password: string } ) => {
+    signup: async ( _: unknown, { name, email, password, username }: { name:string, username: string, email: string, password: string } ) => {
       const signUp = new SignUpCommand({
         ClientId: appClientId,
         Username: username,
@@ -170,7 +170,8 @@ const resolvers = {
       });
       try {
         const response = await cognitoIdentityProviderClient.send(signUp);
-        createUser(username, email)
+        const res = await createUser(name, username, email)
+        console.log(res)
         return response.UserSub;
       } catch (error) {
         let err = "error";

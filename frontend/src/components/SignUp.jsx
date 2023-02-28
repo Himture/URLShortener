@@ -3,7 +3,11 @@ import { signup } from "../logic/gql";
 import { authenticate } from "../logic/auth";
 
 export default function SignUp() {
-  const [token, setoken] = useState();
+  const [token, setoken] = useState("")
+  const [name, setname] = useState("")
+  const [email, setemail] = useState("")
+  const [password, setpassword] = useState("")
+  const [username, setusername] = useState("")
 
   useEffect(() => {
     async function getToken() {
@@ -13,6 +17,12 @@ export default function SignUp() {
     }
     getToken();
   }, []);
+
+  async function onClick() {
+  const res = await signup(name, email, password, username);
+  window.alert("done");
+  window.location = "/";
+}
 
   if (!token) {
     return (
@@ -24,6 +34,20 @@ export default function SignUp() {
             </h1>
             <div className="mb-2">
               <label
+                htmlFor="name"
+                className="block text-sm font-semibold text-gray-800"
+              >
+                Name
+              </label>
+              <input
+                id="name"
+                type="name"
+                onChange={(e) => setname(e.target.value)}
+                className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              />
+            </div>
+            <div className="mb-2">
+              <label
                 htmlFor="username"
                 className="block text-sm font-semibold text-gray-800"
               >
@@ -32,6 +56,7 @@ export default function SignUp() {
               <input
                 id="username"
                 type="username"
+                onChange={(e) => setusername(e.target.value)}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
@@ -45,6 +70,7 @@ export default function SignUp() {
               <input
                 id="email"
                 type="email"
+                onChange={(e) => setemail(e.target.value)}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
@@ -58,12 +84,13 @@ export default function SignUp() {
               <input
                 id="password"
                 type="password"
+                onChange={(e) => setpassword(e.target.value)}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
             <div className="mt-6">
               <button
-                onClick={onC}
+                onClick={onClick}
                 className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
               >
                 Sign Up
@@ -76,13 +103,4 @@ export default function SignUp() {
   } else {
     return <>{(window.location = "/")}</>;
   }
-}
-
-async function onC() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const email = document.getElementById("email").value;
-  const res = await signup(email, password, username);
-  window.alert(res);
-  window.location = "/";
 }
