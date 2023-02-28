@@ -46,7 +46,7 @@ export const schema = createSchema({
       signup(name:String, email: String, password: String, username: String): String
       logout(idToken: String): String
 
-      addUrl(oLink: String, sLink: String): dbRes
+      addUrl(oLink: String, sLink: String, tag: String): dbRes
       updateUrl(sLink: String, oLink: String): dbRes
       addTag(sLink: String, tag: String): dbRes
       deleteUrl(sLink: String): dbRes

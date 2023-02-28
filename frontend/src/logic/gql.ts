@@ -64,9 +64,9 @@ export async function getUsername() {
   return data.getUsername
 }
 
-export async function addUrl(oLink:string, sLink: string) {
+export async function addUrl(oLink:string, sLink: string, tag:string) {
   const query = gql`mutation{
-    addUrl(oLink:"${oLink}", sLink:"${sLink}"){
+    addUrl(oLink:"${oLink}", sLink:"${sLink}", tag: "${tag}"){
       message
     }
   }`

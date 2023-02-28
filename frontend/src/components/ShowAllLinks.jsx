@@ -15,7 +15,7 @@ export default function ShowAllLinks() {
   const [res, setRes] = useState();
   const [tags, settags] = useState();
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState();
+  const [activeTab, setActiveTab] = useState("hidden");
 
   useEffect(() => {
     async function getToken() {
@@ -81,55 +81,69 @@ export default function ShowAllLinks() {
     window.alert(res);}
   }
 
+  async function handleTab(event) {
+    const tab = event.target.name
+    if(tab == "notag"){
+      setActiveTab(null)
+    }
+    setActiveTab(tab)
+  }
+
   const links = tags?.map((tag) => {
     return (
-      <div key={tag} className="tab overflow-visible">
-        {tag == null ? <h1 className="mt-10 ml-10 text-2xl mb-0">No Tag</h1> : <h1 className="mt-10 ml-10 text-2xl mb-0">{tag}</h1>}
-        {res?.map((links) => {
-          if (links.tag == tag) {
-            return (
-              <div
-                key={links.sLink}
-                className="tabcontent item bg-white m-10 rounded-lg"
-              >
-                <div className="item-info">
-                  <p id={links.oLink} className="text-lg">
-                    <a href={"https://" + links.oLink} target="_blank">
-                      o/{links.sLink}
-                    </a>
-                  </p>
-                  <p id={links.sLink} className="text-sm">
-                    {links.oLink}
-                  </p>
-                  <p id={links.tag}>{links.tag}</p>
+      <div key={tag} className="overflow-visible">
+        <div className="grid-rows-4	">
+        {tag == null && !search ? <button name="notag" onClick={handleTab} className="mt-10 ml-10 text-2xl mb-0">No Tag</button> : !search ? <button name={tag} onClick={handleTab} className="mt-10 ml-10 text-2xl mb-0">{tag}</button> : <></>}
+        </div>
+        <div className="flex-col">
+          {res?.map((links) => {
+            if(links.tag == null) { tag = "notag"
+            links.tag = "notag"}
+            if (links.tag == tag && activeTab == links.tag) {
+              return (
+                <div
+                  key={links.sLink}
+                  className={`tabcontent item bg-white m-10 rounded-lg`}
+                >
+                  <div className="item-info">
+                    <p id={links.oLink} className="text-lg">
+                      <a href={"https://" + links.oLink} target="_blank">
+                        o/{links.sLink}
+                      </a>
+                    </p>
+                    <p id={links.sLink} className="text-sm">
+                      {links.oLink}
+                    </p>
+                    <p id={links.tag}>{links.tag}</p>
+                  </div>
+                  <div className="item-actions">
+                    <button
+                      value={links.sLink}
+                      onClick={handleEdit}
+                      className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      value={links.sLink}
+                      onClick={handletag}
+                      className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      {links.tag ? "Edit tag" : "Add tag"}
+                    </button>
+                    <button
+                      value={links.sLink}
+                      onClick={handleDelete}
+                      className="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div className="item-actions">
-                  <button
-                    value={links.sLink}
-                    onClick={handleEdit}
-                    className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    value={links.sLink}
-                    onClick={handletag}
-                    className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    {links.tag ? "Edit tag" : "Add tag"}
-                  </button>
-                  <button
-                    value={links.sLink}
-                    onClick={handleDelete}
-                    className="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            );
-          }
-        })}
+              );
+            }
+          })}
+        </div>
       </div>
     );
   });
@@ -178,7 +192,7 @@ export default function ShowAllLinks() {
             </button>
           </div>
 
-          <div className="flex flex-col min-h-screen stock-container">
+          <div className="min-h-screen stock-container">
             <ul>{links}</ul>
           </div>
         </div>

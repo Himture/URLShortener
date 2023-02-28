@@ -9,6 +9,7 @@ export default function CreateLink() {
   const [token, setoken] = useState();
   const [oLink, setoLink] = useState()
   const [sLink, setsLink] = useState()
+  const [tag, setTag] = useState()
 
   useEffect(() => {
     async function getToken() {
@@ -18,7 +19,7 @@ export default function CreateLink() {
   }, [])
 
   async function onC(){
-    const res = await addUrl(oLink, sLink)
+    const res = await addUrl(oLink, sLink, tag)
     window.alert(res)
     setoLink("")
     setsLink("")
@@ -52,6 +53,18 @@ export default function CreateLink() {
               id = "sLink"
                 type="Link"
                 onChange={(e) => setsLink(e.target.value)}
+                className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="sLink"
+                className="block text-sm font-semibold text-gray-800"
+              >Tag (optional)</label>
+              <input
+              id = "tag"
+                type="text"
+                onChange={(e) => setTag(e.target.value)}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
