@@ -9,6 +9,7 @@ import {
 } from "../logic/gql";
 import "./App.css";
 import NotLogedIn from "./NotLogedIn";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function ShowAllLinks() {
   const [token, setoken] = useState();
@@ -16,6 +17,7 @@ export default function ShowAllLinks() {
   const [tags, settags] = useState();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("hidden");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getToken() {
@@ -28,107 +30,140 @@ export default function ShowAllLinks() {
       async function getData() {
         await allUserURL(token).then((t) => {
           setRes(t.links);
-          const rectag = [
-            ...new Set(t.links?.map((links) => links.tag).flat()),
-          ];
+          const rectag = [...new Set(t.links?.map((links) => links.tag).flat()),];
           rectag.sort();
           settags(rectag);
+          setIsLoading(false)
         });
       }
       getData();
-    } else {
-      async function getData() {
+    } else {    
+      setIsLoading(true)
+      let debounce = setTimeout(async () => {
         const data = await incrementalSearch(search);
         console.log("api call happened");
+        console.log(data);
         setRes(data);
-      }
-      getData();
+        setIsLoading(false)
+      }, 500);
+      return () => clearTimeout(debounce);
     }
   }, [search, activeTab]);
 
   function handleSearch(event) {
-    setTimeout(() => {
-      const searching = event.target.value;
+    const searching = event.target.value;
     setSearch(searching);
     console.log("You clicked search");
-    }, 1000);
   }
 
   async function handleDelete(event) {
-    if (confirm("Are you sure")) {
-      const act = window.alert(event.target.value);
-      if(act) {
+    if (confirm("Are you sure to delete o/" + event.target.value)) {
       const res = await deleteUrl(event.target.value);
       window.alert(res);
-      window.location.reload();}
+      window.location.reload();
     }
   }
 
   async function handleTag(event) {
     const sLink = event.target.value;
     const val = prompt("Enter the tag for o/" + sLink);
-    if(val){
-    const res = await addTag(sLink, val);
-    window.alert(res);}
+    if (val) {
+      const res = await addTag(sLink, val);
+      window.alert(res);
+    }
   }
 
   async function handleEdit(event) {
     const sLink = event.target.value;
     const val = prompt("Enter new link for o/" + sLink);
-    if(val){
-    const res = await updateUrl(sLink, val);
-    window.alert(res);}
+    if (val) {
+      const res = await updateUrl(sLink, val);
+      window.alert(res);
+    }
   }
 
   async function handleTab(event) {
-    const tab = event.target.name
-    if(tab == "notag"){
-      setActiveTab(null)
-    }
-    setActiveTab(tab)
+    const tab = event.target.name;
+    setActiveTab(tab);
   }
 
-  const links = tags?.map((tag) => {
-    return (
-      <div key={tag} className="overflow-visible">
-        <div className="grid-rows-4	">
-          {tag == null && !search ? <button name="notag" onClick={handleTab} className="mt-10 ml-10 text-2xl mb-0">No Tag</button> : !search ? <button name={tag} onClick={handleTab} className="mt-10 ml-10 text-2xl mb-0">{tag}</button> : <></>}
-        </div>
-        <div className="flex-col">
-          {res?.map((links) => {
-            if (links.tag == tag) {
-              return (
-                <div key={links.sLink} className={`tabcontent item bg-white m-10 rounded-lg`}>
-                  <div className="item-info">
-                    <p id={links.oLink} className="text-lg">
-                      <a href={"https://" + links.oLink} target="_blank">
-                        o/{links.sLink}
-                      </a>
-                    </p>
-                    <p id={links.sLink} className="text-sm">
-                      {links.oLink}
-                    </p>
-                    <p id={links.tag}>{links.tag}</p>
-                  </div>
-                  <div className="item-actions">
-                    <button value={links.sLink} onClick={handleEdit} className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                      Edit
-                    </button>
-                    <button value={links.sLink} onClick={handleTag} className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                      {links.tag ? "Edit tag" : "Add tag"}
-                    </button>
-                    <button value={links.sLink} onClick={handleDelete} className="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              );
-            }
-          })}
-        </div>
+  const linkBox = (links) => (
+    <div
+      key={links.sLink}
+      className={`tabcontent item bg-white m-10 rounded-lg`}
+    >
+      <div className="item-info flex-none">
+        <p id={links.oLink} className="text-lg">
+          <a href={"https://" + links.oLink} target="_blank">
+            o/{links.sLink}
+          </a>
+        </p>
+        <p id={links.sLink} className="text-sm">
+          {links.oLink}
+        </p>
+        <p id={links.tag}>{links.tag}</p>
       </div>
-    );
-  });
+      <div className="item-actions">
+        <button
+          value={links.sLink}
+          onClick={handleEdit}
+          className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Edit
+        </button>
+        <button
+          value={links.sLink}
+          onClick={handleTag}
+          className="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Edit Tag
+        </button>
+        <button
+          value={links.sLink}
+          onClick={handleDelete}
+          className="delete-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Delete
+        </button>
+      </div>
+    </div>)
+
+  const boxCheck = (
+    <div>
+      {res?.map((links) => {
+        if (activeTab == links.tag && !search) {
+          return linkBox(links);
+        } else if (search) {
+          return linkBox(links);
+        }
+      })}
+    </div>
+  );
+
+  const links = (
+    <div>
+      <div className="flex">
+        {tags?.map((tag) => {
+          return (
+            <div key={tag}>
+              {!search ? (
+                <button
+                  name={tag}
+                  onClick={handleTab}
+                  className={"mt-10 ml-10 mb-0 " + (activeTab == tags ? "text-s" : "text-2xl")}
+                >
+                  {tag}
+                </button>
+              ) : (
+                <></>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {boxCheck}
+    </div>
+  );
 
   if (token) {
     return (
@@ -173,10 +208,7 @@ export default function ShowAllLinks() {
               Search
             </button>
           </div>
-
-          <div className="min-h-screen stock-container">
-            <ul>{links}</ul>
-          </div>
+          <div className="min-h-screen stock-container">{isLoading ? <LoadingSpinner /> : links}</div>
         </div>
       </>
     );

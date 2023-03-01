@@ -22,7 +22,6 @@ export async function incrementalSearch(quer:string) {
     }
   }`
   const data = await graphQLClient.request(query)
-  console.log(data.incrementalSearch)
   return data.incrementalSearch
 }
 
