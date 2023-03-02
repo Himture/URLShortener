@@ -85,6 +85,7 @@ const resolvers = {
 
     addUrl: async (_: unknown, { oLink, sLink, tag }: { oLink: string, sLink: string, tag: string }, ctx: any) => {
       const user = await verifyUser(ctx)
+      oLink = oLink.replace(/(^\w+:|^)\/\/www./, '')
       if (!user) {
         return { message: "Unauthorized" }
       }
@@ -105,6 +106,7 @@ const resolvers = {
 
     updateUrl: async (_: unknown, { sLink, oLink }: { sLink: string, oLink: string }, ctx: any) => {
       const user = await verifyUser(ctx)
+      oLink = oLink.replace(/(^\w+:|^)\/\/www./, '')
       if (!user) {
         return { message: "Unauthorized" }
       }

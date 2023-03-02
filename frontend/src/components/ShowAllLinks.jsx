@@ -19,7 +19,7 @@ export default function ShowAllLinks() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
-  const [showAll, setShowAll] = useState()
+  const [reload, setReload] = useState(false)
   const count = useRef(0);
 
   useEffect(() => {
@@ -38,9 +38,9 @@ export default function ShowAllLinks() {
           rectag.sort();
           console.log("calling api")
           settags(rectag);
-          setShowAll(true)
           count.current = 0
           setIsLoading(false)
+          setReload(false)
       })}, 300)
       return () => clearTimeout(debounce);
     } else {    
@@ -51,11 +51,12 @@ export default function ShowAllLinks() {
         console.log(data);
         setRes(data);
         setIsLoading(false)
+        setReload(flase)
         count.current = 0
       }, 500);
       return () => clearTimeout(debounce);
     }
-  }, [search, activeTab]);
+  }, [search, activeTab, reload]);
 
   function handleSearch(event) {
     const searching = event.target.value;
@@ -66,13 +67,14 @@ export default function ShowAllLinks() {
   async function handleLogout(event) {
     const res = await logout()
     window.alert(res)
+    window.location.reload()
   }
 
   async function handleDelete(event) {
     if (confirm("Are you sure to delete o/" + event.target.id)) {
       const res = await deleteUrl(event.target.id);
       window.alert(res);
-      window.location.reload();
+      setReload(true)
     }
   }
 
@@ -82,18 +84,17 @@ export default function ShowAllLinks() {
     if (val) {
       const res = await addTag(sLink, val);
       window.alert(res);
-      window.location.reload()
+      setReload(true)
     }
   }
 
   async function handleEdit(event) {
     const sLink = event.target.id;
-    console.log(event.target)
     const val = prompt("Enter new link for o/" + sLink);
     if (val) {
       const res = await updateUrl(sLink, val);
       window.alert(res);
-      window.location.reload();
+      setReload(true)
     }
   }
 
@@ -158,26 +159,39 @@ export default function ShowAllLinks() {
 
   const links = (
     <div>
-      <div className="flex border-b-2 pb-0 mx-5 mt-5">
-      {!search ? <div style={activeTab == "All" ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="text-xs px-2 flex pb-5 justify-center"><button name="All" onClick={handleTab} className={"text-md pt-0"}>All</button></div> : <></>}
+      <div className="flex pb-0 border-b-2 mt-5">
+      {!search ? <div style={activeTab == "All" ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="ml-5 text-xs px-2 flex pb-5 justify-center"><button name="All" onClick={handleTab} className={"text-md pt-0"}>All</button></div> : <></>}
         {tags?.map((tag) => {
           return (
             <div key={tag}>
               {!search ? (
-              <div style={activeTab == tag ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="text-xs px-2 flex pb-5 justify-center">
+              <div style={activeTab == tag ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="ml-5 text-xs px-2 flex pb-5 justify-center">
                 <button name={tag} onClick={handleTab} className={"text-md pt-0"}> {tag} </button>
               </div>
               ) : (<></>)}
             </div>);
         })}
       </div>
+      {isLoading ? 
+        <div className=" mt-10 flex items-center justify-center">
+          <div
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status">
+            <span
+              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+              >Loading...</span
+            >
+          </div>
+        </div> 
+        :
       <div className="links-container">
-        <div className="pl-5 pt-5">
-          <h1 className="text-sm text-gray-500">Showing {count.current} results.</h1>
-        </div>
-          <div className="mt-5">{boxCheck}</div>
-        </div>
+          <div className="pl-5 pt-5">
+            <h1 className="text-sm text-gray-500">Showing {count.current} results.</h1>
+          </div>
+        <div className="mt-5">{boxCheck}</div>
       </div>
+      }
+    </div>
   );
 
   if (token) {
@@ -225,7 +239,9 @@ export default function ShowAllLinks() {
             </button>
         </div>
       </div>
-      <div className="min-h-screen stock-container">{isLoading ? <LoadingSpinner /> : links}</div>
+      <div className="min-h-screen stock-container">
+          {links}
+      </div>
       </>
     );
   } else {
