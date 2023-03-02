@@ -159,12 +159,12 @@ export default function ShowAllLinks() {
   const links = (
     <div>
       <div className="flex border-b-2 pb-0">
-      {!search ? <div style={activeTab == "All" ? {borderBottom: "3px solid blue", borderRadius: "-4px", color: "black"} : {color: "grey"}} className="mt-5 ml-5 mb-0 px-2 flex pb-5 justify-center"><button name="All" onClick={handleTab} className={"text-md pt-0"}>All</button></div> : <></>}
+      {!search ? <div style={activeTab == "All" ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="mt-5 ml-5 mb-0 px-2 flex pb-5 justify-center"><button name="All" onClick={handleTab} className={"text-md pt-0"}>All</button></div> : <></>}
         {tags?.map((tag) => {
           return (
             <div key={tag}>
               {!search ? (
-              <div style={activeTab == tag ? {borderBottom: "3px solid blue", borderRadius: "-4px", color: "black"} : {color: "grey"}} className="mt-5 ml-5 mb-0 px-2 flex pb-5 justify-center">
+              <div style={activeTab == tag ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="mt-5 ml-5 mb-0 px-2 flex pb-5 justify-center">
                 <button name={tag} onClick={handleTab} className={"text-md pt-0"}> {tag} </button>
               </div>
               ) : (<></>)}
@@ -172,7 +172,7 @@ export default function ShowAllLinks() {
         })}
       </div>
       <div className="pl-5 pt-5">
-        <h1>Showing {count.current} results.</h1>
+        <h1 className="text-gray-500">Showing {count.current} results.</h1>
       </div>
       <div className="mt-5">
       {boxCheck}</div>
@@ -182,7 +182,7 @@ export default function ShowAllLinks() {
   if (token) {
     return (
       <>
-      <div className="flex justify-center items-center p-5 border-b-2">
+      <div className="flex justify-center items-center p-5 border-b-2 links-container">
         <div className="w-1/2 mr-auto">
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
             Search
@@ -193,18 +193,18 @@ export default function ShowAllLinks() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </div>
-            <input onChange={handleSearch} type="search" id="default-search" className="block w-full p-4 pl-10 text-sm text-gray-900 border-2 border-blue-700 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required
+            <input onChange={handleSearch} type="search" id="default-search" className="block h-10 w-full p-4 pl-10 text-sm text-gray-900 border-2 border-blue-700 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required
             />
           </div>
         </div>
         <div className="ml-auto flex items-center justify-center space-x-4">
           <button>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
             </svg>
           </button>
           <button>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
             </svg>
           </button>
