@@ -10,7 +10,6 @@ import {
 } from "../logic/gql";
 import "./App.css";
 import NotLogedIn from "./NotLogedIn";
-import LoadingSpinner from "./LoadingSpinner";
 
 export default function ShowAllLinks() {
   const [token, setoken] = useState();
