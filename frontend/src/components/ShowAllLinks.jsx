@@ -104,10 +104,10 @@ export default function ShowAllLinks() {
 
   const linkBox = (links) => {
   return(
-    <div key={links.sLink} className={`tabcontent item bg-white m-5 rounded-lg group w-2/3`}>
-      <img height="50" width="50" src={`http://favicon.yandex.net/favicon/${links.oLink}`} />
+    <div key={links.sLink} className={`h-16	tabcontent item bg-white m-5 rounded-lg group w-2/3`}>
+      <img height="40" width="40" src={`http://favicon.yandex.net/favicon/${links.oLink}`} />
       <div className="item-info flex-none ml-5">
-        <p id={links.oLink} className="text-xl">
+        <p id={links.oLink} className="text-sm">
           <a href={"https://" + links.oLink} target="_blank">
             o/{links.sLink}
           </a>
@@ -115,7 +115,7 @@ export default function ShowAllLinks() {
         <p id={links.sLink} className="text-xs">
           {links.oLink}
         </p>
-        <p id={links.tag} className="text-sm text-slate-500	">
+        <p id={links.tag} className="text-xs text-slate-500	">
           {links.tag}
         </p>
       </div>
@@ -158,31 +158,32 @@ export default function ShowAllLinks() {
 
   const links = (
     <div>
-      <div className="flex border-b-2 pb-0">
-      {!search ? <div style={activeTab == "All" ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="mt-5 ml-5 mb-0 px-2 flex pb-5 justify-center"><button name="All" onClick={handleTab} className={"text-md pt-0"}>All</button></div> : <></>}
+      <div className="flex border-b-2 pb-0 mx-5 mt-5">
+      {!search ? <div style={activeTab == "All" ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="text-xs px-2 flex pb-5 justify-center"><button name="All" onClick={handleTab} className={"text-md pt-0"}>All</button></div> : <></>}
         {tags?.map((tag) => {
           return (
             <div key={tag}>
               {!search ? (
-              <div style={activeTab == tag ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="mt-5 ml-5 mb-0 px-2 flex pb-5 justify-center">
+              <div style={activeTab == tag ? {borderBottom: "3px solid blue", color: "black"} : {color: "grey"}} className="text-xs px-2 flex pb-5 justify-center">
                 <button name={tag} onClick={handleTab} className={"text-md pt-0"}> {tag} </button>
               </div>
               ) : (<></>)}
             </div>);
         })}
       </div>
-      <div className="pl-5 pt-5">
-        <h1 className="text-gray-500">Showing {count.current} results.</h1>
+      <div className="links-container">
+        <div className="pl-5 pt-5">
+          <h1 className="text-sm text-gray-500">Showing {count.current} results.</h1>
+        </div>
+          <div className="mt-5">{boxCheck}</div>
+        </div>
       </div>
-      <div className="mt-5">
-      {boxCheck}</div>
-    </div>
   );
 
   if (token) {
     return (
       <>
-      <div className="flex justify-center items-center p-5 border-b-2 links-container">
+      <div className="flex justify-center items-center p-5 border-b-2">
         <div className="w-1/2 mr-auto">
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
             Search
@@ -213,14 +214,14 @@ export default function ShowAllLinks() {
       </div>
       <div className="px-5 pt-5 pb-0 flex justify-center">
         <div className="mr-auto">
-          <h1 className="text-4xl font-bold">Shortcuts</h1>
+          <h1 className="text-3xl font-bold">Shortcuts</h1>
         </div>
         <div className="ml-auto">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 float-left mr-auto" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
               </svg>
-              <a href="/createlink">New Shortcut</a>
+              <a href="/createlink" className="text-sm">New Shortcut</a>
             </button>
         </div>
       </div>
