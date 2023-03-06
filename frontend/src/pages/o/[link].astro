@@ -2,7 +2,6 @@
 import { getURL } from "../../logic/gql";
 
 const {link} = Astro.params
-
 console.log(link)
 let olink = await getURL(link || "")
 console.log(olink)
