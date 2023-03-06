@@ -1,13 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { authenticate } from "../logic/auth";
-import {
-  allUserURL,
-  deleteUrl,
-  incrementalSearch,
-  updateUrl,
-  addTag,
-  logout
-} from "../logic/gql";
+import { addUrl, allUserURL, deleteUrl, incrementalSearch, updateUrl, addTag, logout } from "../logic/gql";
 import "./App.css";
 import NotLogedIn from "./NotLogedIn";
 
@@ -15,10 +8,14 @@ export default function ShowAllLinks() {
   const [token, setoken] = useState();
   const [res, setRes] = useState();
   const [tags, settags] = useState();
+  const [oLink, setoLink] = useState()
+  const [sLink, setsLink] = useState()
+  const [tag, setTag] = useState()
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [reload, setReload] = useState(false)
+  const [creatingLink, setCreatingLink] = useState(false)
   const count = useRef(0);
 
   useEffect(() => {
@@ -50,7 +47,7 @@ export default function ShowAllLinks() {
         console.log(data);
         setRes(data);
         setIsLoading(false)
-        setReload(flase)
+        setReload(false)
         count.current = 0
       }, 500);
       return () => clearTimeout(debounce);
@@ -59,6 +56,7 @@ export default function ShowAllLinks() {
 
   function handleSearch(event) {
     const searching = event.target.value;
+    count.current = 0
     setSearch(searching);
     console.log("You clicked search");
   }
@@ -74,6 +72,7 @@ export default function ShowAllLinks() {
       const res = await deleteUrl(event.target.id);
       window.alert(res);
       setReload(true)
+      setActiveTab("All")
     }
   }
 
@@ -84,6 +83,7 @@ export default function ShowAllLinks() {
       const res = await addTag(sLink, val);
       window.alert(res);
       setReload(true)
+      setActiveTab("All")
     }
   }
 
@@ -94,6 +94,7 @@ export default function ShowAllLinks() {
       const res = await updateUrl(sLink, val);
       window.alert(res);
       setReload(true)
+      setActiveTab("All")
     }
   }
 
@@ -101,6 +102,80 @@ export default function ShowAllLinks() {
     const tab = event.target.name;
     setActiveTab(tab);
   }
+
+  async function handleAdd(event) {
+    setCreatingLink(true)
+  }
+
+  async function closeAddURL() {
+    setCreatingLink(false)
+  }
+
+  async function addURL(){
+    console.log(oLink, sLink, tag)
+    const res = await addUrl(oLink, sLink, tag)
+    window.alert(res)
+    setCreatingLink(false)
+    setoLink("")
+    setsLink("")
+    setTag("")
+    setReload(true)
+   }
+
+  const addNewURL = <div className="fixed flex items-center justify-center h-screen w-full bg-opacity-50 bg-slate-400">
+    <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
+    <button className="float-right" onClick={closeAddURL}>x</button>
+      <h1 className="text-3xl font-semibold text-center text-purple-700">
+        Enter Link to Shorten
+      </h1>
+        <div className="mb-2">
+          <label
+            htmlFor="oLink"
+            className="block text-sm font-semibold text-gray-800"
+          >Original Link</label>
+          <input
+          id = "oLink"
+            type="Link"
+            onChange={(e) => setoLink(e.target.value)}
+            className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="sLink"
+            className="block text-sm font-semibold text-gray-800"
+          >Short Link</label>
+          <input
+          id = "sLink"
+            type="Link"
+            onChange={(e) => setsLink(e.target.value)}
+            className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="sLink"
+            className="block text-sm font-semibold text-gray-800"
+          >Tag (optional)</label>
+          <input
+          id = "tag"
+            type="text"
+            onChange={(e) => setTag(e.target.value)}
+            className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+          />
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={addURL}
+            className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
+          >
+            Shorten
+          </button>
+        </div>
+    </div>
+  </div>
 
   const linkBox = (links) => {
   return(
@@ -141,14 +216,17 @@ export default function ShowAllLinks() {
   const boxCheck = (
     <div>
       {res?.map((links) => {
-        if(activeTab == "All"){
+        if(activeTab == "All" && !search){
+          console.log("showing all")
           count.current = count.current + 1
           return(linkBox(links))
         }
         else if (activeTab == links.tag && !search) {
+          console.log("switch tab")
           count.current = count.current + 1
           return linkBox(links);
         } else if (search) {
+          console.log("entered search")
           count.current = count.current + 1
           return linkBox(links);
         }
@@ -178,8 +256,7 @@ export default function ShowAllLinks() {
             role="status">
             <span
               className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-              >Loading...</span
-            >
+              >Loading...</span>
           </div>
         </div> 
         :
@@ -225,16 +302,17 @@ export default function ShowAllLinks() {
           <button onClick={handleLogout}>Logout</button>
         </div>
       </div>
+      {creatingLink && addNewURL}
       <div className="px-5 pt-5 pb-0 flex justify-center">
         <div className="mr-auto">
           <h1 className="text-3xl font-bold">Shortcuts</h1>
         </div>
         <div className="ml-auto">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center space-x-2">
+          <button onClick={handleAdd} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 float-left mr-auto" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
               </svg>
-              <a href="/createlink" className="text-sm">New Shortcut</a>
+              <a className="text-sm">New Shortcut</a>
             </button>
         </div>
       </div>

@@ -10,14 +10,14 @@ const USER_TABLE = "user";
 const LINKS_TABLE = "links";
 
 export async function createShortUrl(oLink: string, sLink: string, tag: string, username: string) {
-  if (!!tag) {
-    const query = `INSERT INTO ${LINKS_TABLE} (oLink, sLink,tag, username) VALUES (?, ?, ?, ?);`
-    const result = await connection.execute(query, [oLink, sLink, tag, username]);
+  if (tag === 'undefined') {
+    const query = `INSERT INTO ${LINKS_TABLE} (oLink, sLink, username) VALUES (?, ?, ?);`
+    const result = await connection.execute(query, [oLink, sLink, username]);
     return result.insertId;
   }
   else {
-    const query = `INSERT INTO ${LINKS_TABLE} (oLink, sLink, username) VALUES (?, ?, ?);`
-    const result = await connection.execute(query, [oLink, sLink, username]);
+    const query = `INSERT INTO ${LINKS_TABLE} (oLink, sLink,tag, username) VALUES (?, ?, ?, ?);`
+    const result = await connection.execute(query, [oLink, sLink, tag, username]);
     return result.insertId;
   }
 }
