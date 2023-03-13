@@ -288,8 +288,8 @@ export default function ShowAllLinks() {
       {! (res.length) ? 
       <div className="flex flex-col items-center justify-center h-full	w-full	">
         <img className="h-20 w-20" src="../../public/nothing.gif" alt="Make new link" />
-        <h1>You havent made any links yet.</h1>
-        <button onClick={handleAdd}>Start with New Shortcut button</button>
+        <h1>No links found</h1>
+        <button onClick={handleAdd}>Click here to create new link...</button>
       </div>
       :
       res?.map((links) => {
