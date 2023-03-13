@@ -20,7 +20,7 @@ export default function SignUp() {
 
   async function onClick() {
   const res = await signup(name, email, password, username);
-  window.alert("done");
+  window.alert("Please check your mail for confirmation code to activate your account. Enter the confirmation code by going to the confirmation code section.");
   window.location = "/";
 }
 
