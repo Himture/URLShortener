@@ -181,7 +181,7 @@ export default function ShowAllLinks() {
               Tag (optional)
             </label>
             <input
-              placeholder="No Tag"
+              placeholder="Default: No Tag"
               id="tag"
               type="text"
               onChange={(e) => setTag(e.target.value)}
@@ -255,6 +255,7 @@ export default function ShowAllLinks() {
               />
             </svg>
           </button>
+          <div className="tooltip">
           <button onClick={handleDelete} className="m-2">
             <svg
               id={links.sLink}
@@ -271,6 +272,7 @@ export default function ShowAllLinks() {
               />
             </svg>
           </button>
+          </div>
         </div>
       </div>
     );
