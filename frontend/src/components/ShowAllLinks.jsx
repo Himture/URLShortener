@@ -14,7 +14,7 @@ import NotLogedIn from "./NotLogedIn";
 
 export default function ShowAllLinks() {
   const [token, setoken] = useState();
-  const [res, setRes] = useState();
+  const [res, setRes] = useState([]);
   const [tags, settags] = useState();
   const [oLink, setoLink] = useState();
   const [sLink, setsLink] = useState();
@@ -37,6 +37,7 @@ export default function ShowAllLinks() {
       setIsLoading(true);
       let debounce = setTimeout(async () => {
         await allUserURL(token).then((t) => {
+          console.log(t.links)
           setRes(t.links);
           const rectag = [
             ...new Set(t.links?.map((links) => links.tag).flat()),
@@ -55,7 +56,6 @@ export default function ShowAllLinks() {
       let debounce = setTimeout(async () => {
         const data = await incrementalSearch(search);
         console.log("api call happened");
-        console.log(data);
         setRes(data);
         setIsLoading(false);
         setReload(false);
@@ -135,69 +135,69 @@ export default function ShowAllLinks() {
   }
 
   const addNewURL = (
-      <div className="animate-fade-in-down fixed flex items-center justify-center h-screen w-full bg-opacity-50 bg-slate-400">
-        <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
-          <button className="float-right text-xl" onClick={closeAddURL}>
-            x
+    <div className="animate-fade-in-down fixed flex items-center justify-center h-screen w-full bg-opacity-50 bg-slate-400">
+      <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
+        <button className="float-right text-xl" onClick={closeAddURL}>
+          x
+        </button>
+        <h1 className="text-3xl font-semibold text-center text-purple-700">
+          Enter Link to Shorten
+        </h1>
+        <div className="mb-2">
+          <label
+            htmlFor="oLink"
+            className="block text-sm font-semibold text-gray-800"
+          >
+            Original Link
+          </label>
+          <input
+            id="oLink"
+            type="Link"
+            onChange={(e) => setoLink(e.target.value)}
+            className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="sLink"
+            className="block text-sm font-semibold text-gray-800"
+          >
+            Short Link
+          </label>
+          <input
+            id="sLink"
+            type="Link"
+            onChange={(e) => setsLink(e.target.value)}
+            className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="sLink"
+            className="block text-sm font-semibold text-gray-800"
+          >
+            Tag (optional)
+          </label>
+          <input
+            placeholder="Default: No Tag"
+            id="tag"
+            type="text"
+            onChange={(e) => setTag(e.target.value)}
+            className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+          />
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={addURL}
+            className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
+          >
+            Shorten
           </button>
-          <h1 className="text-3xl font-semibold text-center text-purple-700">
-            Enter Link to Shorten
-          </h1>
-          <div className="mb-2">
-            <label
-              htmlFor="oLink"
-              className="block text-sm font-semibold text-gray-800"
-            >
-              Original Link
-            </label>
-            <input
-              id="oLink"
-              type="Link"
-              onChange={(e) => setoLink(e.target.value)}
-              className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              required
-            />
-          </div>
-          <div className="mb-2">
-            <label
-              htmlFor="sLink"
-              className="block text-sm font-semibold text-gray-800"
-            >
-              Short Link
-            </label>
-            <input
-              id="sLink"
-              type="Link"
-              onChange={(e) => setsLink(e.target.value)}
-              className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              required
-            />
-          </div>
-          <div className="mb-2">
-            <label
-              htmlFor="sLink"
-              className="block text-sm font-semibold text-gray-800"
-            >
-              Tag (optional)
-            </label>
-            <input
-              placeholder="Default: No Tag"
-              id="tag"
-              type="text"
-              onChange={(e) => setTag(e.target.value)}
-              className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-            />
-          </div>
-          <div className="mt-6">
-            <button
-              onClick={addURL}
-              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
-            >
-              Shorten
-            </button>
-          </div>
         </div>
       </div>
+    </div>
   );
 
   const linkBox = (links) => {
@@ -225,6 +225,7 @@ export default function ShowAllLinks() {
           </p>
         </div>
         <div className="item-actions invisible group-hover:visible">
+          <div title="Edit">
           <button onClick={handleEdit} className="m-2">
             <svg
               id={links.sLink}
@@ -239,6 +240,8 @@ export default function ShowAllLinks() {
               />
             </svg>
           </button>
+          </div>
+          <div title="Change Tag">
           <button onClick={handleTag} className="m-2">
             <svg
               id={links.sLink}
@@ -255,24 +258,25 @@ export default function ShowAllLinks() {
               />
             </svg>
           </button>
-          <div className="tooltip">
-          <button onClick={handleDelete} className="m-2">
-            <svg
-              id={links.sLink}
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                id={links.sLink}
-                fillRule="evenodd"
-                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
           </div>
+          <div title="Delete">
+            <button onClick={handleDelete} className="m-2">
+              <svg
+                id={links.sLink}
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  id={links.sLink}
+                  fillRule="evenodd"
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+            </div>
         </div>
       </div>
     );
@@ -281,7 +285,14 @@ export default function ShowAllLinks() {
   const boxCheck = (
     <div>
       <div className="hidden">{(count.current = 0)}</div>
-      {res?.map((links) => {
+      {! (res.length) ? 
+      <div className="flex flex-col items-center justify-center h-full	w-full	">
+        <img className="h-20 w-20" src="../../public/nothing.gif" alt="Make new link" />
+        <h1>You havent made any links yet.</h1>
+        <button onClick={handleAdd}>Start with New Shortcut button</button>
+      </div>
+      :
+      res?.map((links) => {
         if (activeTab == "All" && !search) {
           console.log("showing all");
           count.current = count.current + 1;
@@ -294,23 +305,17 @@ export default function ShowAllLinks() {
           console.log("entered search");
           count.current = count.current + 1;
           return linkBox(links);
-        }
-      })}
-    </div>
+        } }
+      )
+      }
+    </div> 
   );
 
   const links = (
     <div>
       <div className="flex pb-0 border-b-2 mt-5">
         {!search ? (
-          <div
-            style={
-              activeTab == "All"
-                ? { borderBottom: "3px solid blue", color: "black" }
-                : { color: "grey" }
-            }
-            className="ml-5 text-xs px-2 flex pb-5 justify-center"
-          >
+          <div style={activeTab == "All" ? { borderBottom: "3px solid blue", color: "black" } : { color: "grey" }} className="ml-5 text-xs px-2 flex pb-5 justify-center">
             <button name="All" onClick={handleTab} className={"text-md pt-0"}>
               All
             </button>
@@ -322,19 +327,8 @@ export default function ShowAllLinks() {
           return (
             <div key={tag}>
               {!search ? (
-                <div
-                  style={
-                    activeTab == tag
-                      ? { borderBottom: "3px solid blue", color: "black" }
-                      : { color: "grey" }
-                  }
-                  className="ml-5 text-xs px-2 flex pb-5 justify-center"
-                >
-                  <button
-                    name={tag}
-                    onClick={handleTab}
-                    className={"text-md pt-0"}
-                  >
+                <div style={activeTab == tag ? { borderBottom: "3px solid blue", color: "black" } : { color: "grey" }} className="ml-5 text-xs px-2 flex pb-5 justify-center">
+                  <button name={tag} onClick={handleTab} className={"text-md pt-0"}>
                     {" "}
                     {tag}{" "}
                   </button>
@@ -359,11 +353,12 @@ export default function ShowAllLinks() {
         </div>
       ) : (
         <div className="links-container">
+          {res.length ? 
           <div className="pl-5 pt-5">
-            <h1 className="text-sm text-gray-500">
-              Showing {count.current} results.
-            </h1>
-          </div>
+          <h1 className="text-sm text-gray-500">
+            Showing {count.current} results.
+          </h1>
+        </div>: <></>}
           <div className="mt-5">{boxCheck}</div>
         </div>
       )}
