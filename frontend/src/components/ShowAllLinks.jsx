@@ -181,6 +181,7 @@ export default function ShowAllLinks() {
               Tag (optional)
             </label>
             <input
+              placeholder="No Tag"
               id="tag"
               type="text"
               onChange={(e) => setTag(e.target.value)}

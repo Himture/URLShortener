@@ -17,7 +17,7 @@ export default function ConfirmUser() {
 
   async function onC() {
     const res = await confirmUser(username, code);
-    window.alert(res);
+    window.alert(res+" You can now login.");
     window.location = "/";
   }
 

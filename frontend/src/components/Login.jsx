@@ -18,7 +18,6 @@ export default function Login() {
 
   async function onC() {
     const res = await login(email, password);
-    window.alert(res);
     window.location = "/";
   }
   
